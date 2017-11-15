@@ -21,3 +21,6 @@ Se hará en una escala de 0 a 3 estrellas y el jugador las obtendrá de la sigui
 - 2 estrellas si termina el nivel con solo uno más de energía utilizada que la solución óptima.
 - 1 estrella si termina el nivel con solo dos más de energía utilizada que la solución óptima.
 - 0 estrellas si ocupa consumir tres o más de energía que la solución óptima.
+
+Este es un ejemplo de la ventana principal del juego:
+![Ventana principal del juego](MainFrame.png)
