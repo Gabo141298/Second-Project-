@@ -4,3 +4,4 @@ docs/
 TrainLaneGame/bin/
 *.classpath
 *.project
+/bin/

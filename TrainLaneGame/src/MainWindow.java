@@ -7,12 +7,16 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 /**
- * @author jeisson.hidalgo@ecci.ucr.ac.cr
- *
+ * Used as the main window for the Train Lane Game.
+ * It sets the size of the window and its components, like the design of the level, the current level
+ * and the energy available to the player after any quantity of moves.
  */
 public class MainWindow extends JFrame
 {
-
+	/**
+	 * Constructor for the MainWindow class. It sets the title of the window as "Train Lane Game".
+	 * The size of the window, the obstacle board and the game indicators are also created here.
+	 */
 	public MainWindow()
 	{
 		super("Train Lane Game");
@@ -26,12 +30,19 @@ public class MainWindow extends JFrame
 		this.createGameIndicators();
 	}
 
+	/**
+	 * It creates the obstacle board (the level).
+	 */
 	private void createObstacleBoard()
 	{
 		ObstacleBoard obstacleBoard = new ObstacleBoard();
 		this.add(obstacleBoard, BorderLayout.CENTER);
 	}
 	
+	/**
+	 * It creates the game indicators: the current level the player is in and the energy the player has
+	 * available after the moves he/she has done.
+	 */
 	private void createGameIndicators()
 	{
 		JPanel indicators = new JPanel();
