@@ -1,58 +1,152 @@
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+ 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
 /**
  * Used to set the components of the obstacle board, like the lines to limit the spaces for the vehicles
  * in the game.
  */
-public class ObstacleBoard extends JPanel
+public class ObstacleBoard extends JPanel implements ActionListener, MouseListener
 {
+	private ObstacleMatrix obstacleMatrix = null;
+    private BufferedImage obstacle = null;
+    private Timer timerCarAnimation = null;
+   
+    private int movingCarX = 0;
+    private int movingCarRow = -1;
+    private int movingCarColumn = -1;
+    
+    public ObstacleBoard()
+    {
+       this.obstacleMatrix = new ObstacleMatrix("level01.txt");
+       
+       try
+       {
+          this.obstacle = ImageIO.read( this.getClass().getResource("car.png") );
+       }
+       catch ( IOException exception )
+       {
+          System.err.println(exception);
+       }
+       
+       this.addMouseListener(this);
+  
+       this.timerCarAnimation = new Timer(33, this);
+    }
+    
 	// Override paintComponent to perform your own painting
 	/**
 	 * It sets the background to white and draws the lines, both horizontally and vertically to limit the 
 	 * spaces for the level.
-	 * @param graphics used to change how the obstacle board looks.
+	 * @param g used to change how the obstacle board looks.
 	 */
-	@Override public void paintComponent(Graphics graphics)
+	@Override public void paintComponent(Graphics g)
 	{
-		super.paintComponent(graphics);     // paint parent's background
-		setBackground(Color.WHITE);  // set background color for this JPanel
-		drawHorizontalLines(graphics);
-		drawVerticalLines(graphics);
+		super.paintComponent(g);     // paint parent's background
+		int cellWidth = this.getWidth() / obstacleMatrix.getColumnCount();
+		int cellHeight = this.getHeight() / obstacleMatrix.getRowCount();
+		
+		int paddingHorizontal = (int)(cellWidth * 0.1);
+		int paddingVertical = (int)(cellHeight * 0.2);
+		  
+		for ( int row = 0; row < obstacleMatrix.getRowCount(); ++row )
+		{
+		   for ( int column = 0; column < obstacleMatrix.getColumnCount(); ++column )
+		   {
+		      int y = row * cellHeight;
+		      int x = column * cellWidth;
+		      g.drawRect(x, y, cellWidth, cellHeight);
+		      
+		      if ( obstacleMatrix.hasObstacleIn(row, column) )
+		      {
+		         if ( row == this.movingCarRow && column == this.movingCarColumn )
+		         {
+		            g.drawImage(this.obstacle
+		                  , x + paddingHorizontal + this.movingCarX, y + paddingVertical
+		                  , cellWidth - 2 * paddingHorizontal, cellHeight - 2 * paddingVertical, null);
+		            this.movingCarX -= 5;
+		            if ( Math.abs(this.movingCarX) > cellWidth )
+		            {
+		               this.timerCarAnimation.stop();
+		               this.movingCarX = 0;
+		               this.movingCarRow = this.movingCarColumn = -1;
+		            }
+		         }
+		         else
+		         {
+		            g.drawImage(this.obstacle
+		                  , x + paddingHorizontal, y + paddingVertical
+		                  , cellWidth - 2 * paddingHorizontal, cellHeight - 2 * paddingVertical, null);
+		         }
+		      }
+		   }
+		}
+	}
+	
+	/**
+     * Invoked when the mouse button has been clicked (pressed
+     * and released) on a component.
+     */
+    @Override
+    public void mouseClicked(MouseEvent event)
+    {
+       int cellWidth = this.getWidth() / obstacleMatrix.getColumnCount();
+       int cellHeight = this.getHeight() / obstacleMatrix.getRowCount();
+       
+       int row = event.getY() / cellHeight;
+       int column = event.getX() / cellWidth;
+       System.out.printf("mouseClicked(%d,%d)%n", event.getX(), event.getY());
+       System.out.printf("Obstacle(%d,%d)%n", row + 1, column + 1);
+       
+       this.movingCarRow = row;
+       this.movingCarColumn = column;
+       this.movingCarX = -5;
+       this.timerCarAnimation.start();
+    }
+ 
+    @Override
+    public void mousePressed(MouseEvent event)
+    {
+       // TODO Auto-generated method stub
+       // System.out.printf("mousePressed(%d,%d)%n", event.getX(), event.getY());
+    }
 
-	}
-	
-	/**
-	 * Draws the horizontal lines from the obstacle board.
-	 * @param graphics used to draw the lines
-	 */
-	private void drawHorizontalLines(Graphics graphics)
-	{
-		graphics.setColor(Color.BLACK);    // set the drawing color
-		graphics.drawLine(0, 5,640, 5);
-		graphics.drawLine(0, 96,640, 96);
-		graphics.drawLine(0, 192,640, 192);
-		graphics.drawLine(0, 288,640, 288);
-		graphics.drawLine(0, 384,640, 384);
-	}
-	
-	/**
-	 * Draws the vertical lines from the obstacle board.
-	 * @param graphics used to draw the lines.
-	 */
-	private void drawVerticalLines(Graphics graphics)
-	{
-		graphics.drawLine(0, 5, 0, 384);
-		graphics.drawLine(80, 5, 80, 384);
-		graphics.drawLine(160, 5, 160, 384);
-		graphics.drawLine(240, 5, 240, 384);
-		graphics.drawLine(320, 5, 320, 384);
-		graphics.drawLine(400, 5, 400, 384);
-		graphics.drawLine(480, 5, 480, 384);
-		graphics.drawLine(560, 5, 560, 384);
-		graphics.drawLine(640, 5, 640, 384);
-	}
-	
+    @Override
+    public void mouseReleased(MouseEvent event)
+    {
+       // TODO Auto-generated method stub
+       // System.out.printf("mouseReleased(%d,%d)%n", event.getX(), event.getY());
+    }
+ 
+    @Override
+    public void mouseEntered(MouseEvent event)
+    {
+       // TODO Auto-generated method stub
+       // System.out.printf("mouseEntered(%d,%d)%n", event.getX(), event.getY());
+    }
+ 
+    @Override
+    public void mouseExited(MouseEvent event)
+    {
+       // TODO Auto-generated method stub
+       // System.out.printf("mouseExited(%d,%d)%n", event.getX(), event.getY());
+    }
+
+	 @Override
+	 public void actionPerformed(ActionEvent arg0) 
+	 {
+	 	// TODO Auto-generated method stub
+	 	
+	 }
 }
