@@ -29,7 +29,8 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
     
     public ObstacleBoard()
     {
-       this.obstacleMatrix = new ObstacleMatrix("level01.txt");
+       this.obstacleMatrix = new ObstacleMatrix("C:\\Users\\a\\Documents\\Second-Project-\\TrainLaneGame\\assets\\level01.txt");
+       this.obstacleMatrix.run();
        
        try
        {

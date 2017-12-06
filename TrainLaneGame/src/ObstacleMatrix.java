@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class ObstacleMatrix 
@@ -23,9 +24,9 @@ public class ObstacleMatrix
 			this.level = new File(levelFilename);
 			this.input = new Scanner(level);
 		}
-		catch(Exception exception)
+		catch(FileNotFoundException exception)
 		{
-			
+			System.err.println(exception);
 		}
 	}
 	
