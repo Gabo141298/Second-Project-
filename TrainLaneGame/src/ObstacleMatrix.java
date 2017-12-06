@@ -201,6 +201,18 @@ public class ObstacleMatrix
 	
 	public boolean hasObstacleIn(int row, int column)
     {
-       return currentGame[row][column] == 1;
+		if (column >=0 && column < currentGame[row].length)
+			return currentGame[row][column] == 1;
+		return true;
     }
+    /**
+     * Saves the movement of a car on the game matrix
+     * @Param the row and column to modify
+     * @Param the direction on which the car is to be moved
+     */
+    public void setObstacle(int row, int column, int direction)
+    {
+			currentGame[row][column] = 0;
+			currentGame[row][column + direction] = 1;		
+	}
 }

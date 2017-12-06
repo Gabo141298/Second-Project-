@@ -61,7 +61,7 @@ public class MainWindow extends JFrame implements ActionListener
 		
 		Font font = new Font("Sans", Font.BOLD, 20);
 		
-		JLabel labelLevel = new JLabel("Level: 1");
+		this.labelLevel = new JLabel("Level: 1");
 		labelLevel.setFont(font);
 		indicators.add(labelLevel, BorderLayout.WEST);
 		
@@ -79,14 +79,14 @@ public class MainWindow extends JFrame implements ActionListener
 		{
 			this.updateElapsedTime();
 		}
+		this.repaint();
 	}
 	
 	private void updateElapsedTime()
 	{
 		++this.elapsedSeconds;
 		long minutes = this.elapsedSeconds / 60;
-		long seconds = this.elapsedSeconds % 60;
-		
+		long seconds = this.elapsedSeconds % 60;		
 		int level = 1;
 		String text = String.format("Level: %d. Time %02d:%02d", level , minutes, seconds);
 		this.labelLevel.setText(text);

@@ -26,10 +26,12 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
     private int movingCarX = 0;
     private int movingCarRow = -1;
     private int movingCarColumn = -1;
+    private int direction = 0;
+    private static final int MOVING_PIXELS = 30;
     
     public ObstacleBoard()
     {
-       this.obstacleMatrix = new ObstacleMatrix("C:\\Users\\a\\Documents\\Second-Project-\\TrainLaneGame\\assets\\level01.txt");
+       this.obstacleMatrix = new ObstacleMatrix("/home/bryan/Documentos/Second-Project-/TrainLaneGame/assets/level01.txt");
        this.obstacleMatrix.run();
        
        try
@@ -76,20 +78,23 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 		            g.drawImage(this.obstacle
 		                  , x + paddingHorizontal + this.movingCarX, y + paddingVertical
 		                  , cellWidth - 2 * paddingHorizontal, cellHeight - 2 * paddingVertical, null);
-		            this.movingCarX -= 5;
+		            this.movingCarX += MOVING_PIXELS * this.direction;
 		            if ( Math.abs(this.movingCarX) > cellWidth )
 		            {
 		               this.timerCarAnimation.stop();
 		               this.movingCarX = 0;
-		               this.movingCarRow = this.movingCarColumn = -1;
+		               this.movingCarRow = this.movingCarColumn = MOVING_PIXELS * direction;
+		               obstacleMatrix.setObstacle(row, column, direction);
 		            }
 		         }
+		         
 		         else
 		         {
-		            g.drawImage(this.obstacle
+						g.drawImage(this.obstacle
 		                  , x + paddingHorizontal, y + paddingVertical
-		                  , cellWidth - 2 * paddingHorizontal, cellHeight - 2 * paddingVertical, null);
+		                  , cellWidth - 2 * paddingHorizontal, cellHeight - 2 * paddingVertical, null);						
 		         }
+		         
 		      }
 		   }
 		}
@@ -102,18 +107,24 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
     @Override
     public void mouseClicked(MouseEvent event)
     {
-       int cellWidth = this.getWidth() / obstacleMatrix.getColumnCount();
-       int cellHeight = this.getHeight() / obstacleMatrix.getRowCount();
-       
-       int row = event.getY() / cellHeight;
-       int column = event.getX() / cellWidth;
-       System.out.printf("mouseClicked(%d,%d)%n", event.getX(), event.getY());
-       System.out.printf("Obstacle(%d,%d)%n", row + 1, column + 1);
-       
-       this.movingCarRow = row;
-       this.movingCarColumn = column;
-       this.movingCarX = -5;
-       this.timerCarAnimation.start();
+		if(!this.timerCarAnimation.isRunning())
+		{		
+			int cellWidth = this.getWidth() / obstacleMatrix.getColumnCount();
+			int cellHeight = this.getHeight() / obstacleMatrix.getRowCount();
+
+			int row = event.getY() / cellHeight;
+			int column = event.getX() / cellWidth;
+			System.out.printf("mouseClicked(%d,%d)%n", event.getX(), event.getY());
+			System.out.printf("Obstacle(%d,%d)%n", row + 1, column + 1);
+			this.direction = event.getX()%cellWidth > 40? 1:-1;
+			if(!(obstacleMatrix.hasObstacleIn(row, column + direction)))
+			{	
+				this.movingCarRow = row;
+				this.movingCarColumn = column;
+				this.movingCarX = MOVING_PIXELS * direction;
+				this.timerCarAnimation.start();
+			}
+		}				
     }
  
     @Override
