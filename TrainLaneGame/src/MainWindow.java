@@ -71,7 +71,9 @@ public class MainWindow extends JFrame implements ActionListener
 		
 		this.add(indicators, BorderLayout.SOUTH);
 	}
-
+	/**
+	 * Causes the window to repaint if an action is being performed
+	 */
 	@Override
 	public void actionPerformed(ActionEvent event)
 	{
@@ -81,7 +83,9 @@ public class MainWindow extends JFrame implements ActionListener
 		}
 		this.repaint();
 	}
-	
+	/**
+	 * Shows the elapsed time on the in game label
+	 */
 	private void updateElapsedTime()
 	{
 		++this.elapsedSeconds;

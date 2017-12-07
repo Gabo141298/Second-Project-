@@ -29,7 +29,10 @@ public class ObstacleMatrix
 			System.err.println(exception);
 		}
 	}
-	
+	/**
+	 * This method starts the game logic.
+	 * Creates the game matrix and checks if it's a valid matrix
+	 */
 	public void run()   
 	{    
 		// Take the values from the standard input to give currentGame and playsPerColumn their dimensions.        
@@ -189,16 +192,26 @@ public class ObstacleMatrix
 		}        return minimumPlays;    
 	}        
 	
+	/**
+	 * Gets the column amount on this game matrix
+	 * @Return the column count on the game matrix
+	 */
 	public int getColumnCount()
 	{
 		return currentGame[0].length;
 	}
-	
+	/**
+	 * Calculates the row amount on the game matrix
+	 * @Return the game matrix row count
+	 */
 	public int getRowCount()
 	{
 		return currentGame.length;
 	}
-	
+	/**
+	 * Checks if the cell specified is a blank space
+	 * @Return true if the cell is occupied
+	 */
 	public boolean hasObstacleIn(int row, int column)
     {
 		if (column >=0 && column < currentGame[row].length)
