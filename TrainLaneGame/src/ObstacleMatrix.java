@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.net.URISyntaxException;
 import java.util.Scanner;
 
 public class ObstacleMatrix 
@@ -21,12 +22,17 @@ public class ObstacleMatrix
 	{
 		try
 		{
-			this.level = new File(levelFilename);
+			this.level = new File( this.getClass().getResource(levelFilename).toURI() );
 			this.input = new Scanner(level);
 		}
 		catch(FileNotFoundException exception)
 		{
 			System.err.println(exception);
+		} 
+		catch (URISyntaxException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	/**
@@ -46,9 +52,7 @@ public class ObstacleMatrix
 		// Check if the level of the game is actually playable. if it is, it will get the minimum amount of energy needed.        
 		if(checkRows())
 		{
-			 checkPlaysInColumns();                       
-			 // Get the minimum amount of energy required to beat the level.            
-			 int minimumEnergy = getMinimumEnergyConsumed();     
+			 checkPlaysInColumns();  
 		}
 	}
 	
@@ -189,7 +193,8 @@ public class ObstacleMatrix
 		{           
 			// It compares past values with the current one.            
 			minimumPlays = Math.min(minimumPlays, playsPerColumn[index]);        
-		}        return minimumPlays;    
+		}        
+		return minimumPlays;    
 	}        
 	
 	/**

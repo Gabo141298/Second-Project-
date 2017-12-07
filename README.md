@@ -17,9 +17,13 @@ Pueden haber casos en los que hay dos columnas con la misma cantidad de espacios
 Para poder avanzar al siguiente nivel, el jugador no puede gastar más de tres de energía que el mínimo posible en el nivel en el que está.
 Cada nivel le dará una calificación al jugador de acuerdo a su desempeño al ahorrarle energía a la compañía.
 Se hará en una escala de 0 a 3 estrellas y el jugador las obtendrá de la siguiente manera:
+
 - 3 estrellas si termina el nivel de manera óptima, con la mínima cantidad de energía necesaria para terminar el nivel.
+
 - 2 estrellas si termina el nivel con solo uno más de energía utilizada que la solución óptima.
+
 - 1 estrella si termina el nivel con solo dos más de energía utilizada que la solución óptima.
+
 - 0 estrellas si ocupa consumir tres o más de energía que la solución óptima.
 
 Este es un ejemplo de la ventana principal del juego:

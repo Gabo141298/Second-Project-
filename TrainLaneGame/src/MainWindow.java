@@ -81,7 +81,6 @@ public class MainWindow extends JFrame implements ActionListener
 		{
 			this.updateElapsedTime();
 		}
-		this.repaint();
 	}
 	/**
 	 * Shows the elapsed time on the in game label

@@ -27,11 +27,11 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
     private int movingCarRow = -1;
     private int movingCarColumn = -1;
     private int direction = 0;
-    private static final int MOVING_PIXELS = 30;
+    private static final int MOVING_PIXELS = 2;
     
     public ObstacleBoard()
     {
-       this.obstacleMatrix = new ObstacleMatrix("/home/b77733@ecci.ucr.ac.cr/Documentos/Second-Project-/TrainLaneGame/assets/level01.txt");
+       this.obstacleMatrix = new ObstacleMatrix( "level01.txt" );
        this.obstacleMatrix.run();
        
        try
@@ -92,11 +92,23 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 		         {
 						g.drawImage(this.obstacle
 		                  , x + paddingHorizontal, y + paddingVertical
-		                  , cellWidth - 2 * paddingHorizontal, cellHeight - 2 * paddingVertical, null);						
+		                  , cellWidth - 2 * paddingHorizontal, cellHeight - 2 * paddingVertical, null);			
 		         }
 		         
 		      }
 		   }
+		}
+	}
+	
+	/**
+	 * Causes the window to repaint if an action is being performed
+	 */
+	@Override
+	public void actionPerformed(ActionEvent event)
+	{
+		if ( event.getSource() == this.timerCarAnimation )
+		{
+			this.repaint();
 		}
 	}
 	
@@ -108,23 +120,23 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
     public void mouseClicked(MouseEvent event)
     {
 		if(!this.timerCarAnimation.isRunning())
-		{		
+		{
 			int cellWidth = this.getWidth() / obstacleMatrix.getColumnCount();
 			int cellHeight = this.getHeight() / obstacleMatrix.getRowCount();
-
+			
 			int row = event.getY() / cellHeight;
 			int column = event.getX() / cellWidth;
 			System.out.printf("mouseClicked(%d,%d)%n", event.getX(), event.getY());
 			System.out.printf("Obstacle(%d,%d)%n", row + 1, column + 1);
 			this.direction = event.getX()%cellWidth > 40? 1:-1;
 			if(!(obstacleMatrix.hasObstacleIn(row, column + direction)))
-			{	
+			{
 				this.movingCarRow = row;
 				this.movingCarColumn = column;
 				this.movingCarX = MOVING_PIXELS * direction;
 				this.timerCarAnimation.start();
 			}
-		}				
+		}
     }
  
     @Override
@@ -154,11 +166,4 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
        // TODO Auto-generated method stub
        // System.out.printf("mouseExited(%d,%d)%n", event.getX(), event.getY());
     }
-
-	 @Override
-	 public void actionPerformed(ActionEvent arg0) 
-	 {
-	 	// TODO Auto-generated method stub
-	 	
-	 }
 }
