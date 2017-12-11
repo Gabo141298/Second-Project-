@@ -18,6 +18,7 @@ import javax.swing.Timer;
  */
 public class ObstacleBoard extends JPanel implements ActionListener, MouseListener
 {
+	private LevelAdministrator levelAdministrator = null;
 	private ObstacleMatrix obstacleMatrix = null;
 	private Timer timerCarAnimation = null;
 
@@ -29,7 +30,9 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 
 	public ObstacleBoard()
 	{
-		this.obstacleMatrix = new ObstacleMatrix( "level02.txt" );
+		this.levelAdministrator = new LevelAdministrator();
+		
+		this.obstacleMatrix = new ObstacleMatrix( this.levelAdministrator.getCurrentLevel() );
 		this.obstacleMatrix.run();
 
 		this.addMouseListener(this);

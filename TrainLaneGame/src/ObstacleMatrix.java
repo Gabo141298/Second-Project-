@@ -78,9 +78,9 @@ public class ObstacleMatrix
 				if(currentGame[row][column] == 1)
 					vehicles[row][column] = new Car(column);
 				else if(currentGame[row][column] == 2)
-					vehicles[row][column] = vehicles[row][++column] = new Truck(column-1);
+					vehicles[row][column] = vehicles[row][column++] = new Truck(column);
 				else if(currentGame[row][column] == 3)
-					vehicles[row][column] = vehicles[row][++column] = vehicles[row][++column] = new Bus(column-2);
+					vehicles[row][column] = vehicles[row][column++] = vehicles[row][column++] = new Bus(column);
 				else
 					vehicles[row][column] = null;
 			}
