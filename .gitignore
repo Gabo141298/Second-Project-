@@ -5,3 +5,4 @@ TrainLaneGame/bin/
 *.classpath
 *.project
 /bin/
+/.metadata/

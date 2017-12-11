@@ -33,10 +33,10 @@ public class ObstacleMatrix
 		{
 			System.err.println(exception);
 		} 
-		catch (URISyntaxException e) 
+		catch (URISyntaxException exception) 
 		{
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println(exception);
 		}
 	}
 	/**
@@ -76,11 +76,11 @@ public class ObstacleMatrix
 			for(int column = 0; column < vehicles[row].length; ++column)
 			{
 				if(currentGame[row][column] == 1)
-					vehicles[row][column] = new Car();
+					vehicles[row][column] = new Car(column);
 				else if(currentGame[row][column] == 2)
-					vehicles[row][column] = new Truck();
+					vehicles[row][column] = vehicles[row][++column] = new Truck(column);
 				else if(currentGame[row][column] == 3)
-					vehicles[row][column] = new Bus();
+					vehicles[row][column] = vehicles[row][++column] = vehicles[row][++column] = new Bus(column);
 				else
 					vehicles[row][column] = null;
 			}
@@ -237,7 +237,7 @@ public class ObstacleMatrix
 	public boolean hasObstacleIn(int row, int column)
     {
 		if (column >=0 && column < currentGame[row].length)
-			return currentGame[row][column] == 1;
+			return currentGame[row][column] > 0;
 		return true;
     }
     /**
@@ -247,19 +247,39 @@ public class ObstacleMatrix
      */
     public void moveObstacle(int row, int column, int direction)
     {
-    	for(int movements = 0; movements < vehicles[row][column].weight; ++movements)
+    	Vehicle temp =  vehicles[row][column];
+    	vehicles [row][column]= null;
+    	int tempNum = currentGame [row][column];
+    	
+    	for (int count = column; count < vehicles[row][column].getWeight(); count+= direction )
     	{
-    		currentGame[row][column + movements * direction + direction] = 
-    				vehicles[row][column + movements * direction].weight;
-			vehicles[row][column + movements * direction + direction] = 
-					vehicles[row][column + movements * direction];
+    		vehicles [row][count] = temp;
+    		
     	}
-		currentGame[row][column] = 0;
-		vehicles[row][column] = null;
 	}
     
     public BufferedImage getObstacle(int row, int column)
     {
     	return this.vehicles[row][column].getObstacle();
     }
+	public int getWeigth(int row, int column) 
+	{
+		return this.vehicles[row][column].getWeight();
+	}
+	public int getStartColumn(int row, int column) 
+	{
+		return this.vehicles[row][column].getStartingCol();
+	}
+	public boolean canMoveFrom(int row, int column, int direction) 
+	{
+		if (direction == 1)
+		{
+			return this.currentGame[row][this.vehicles[row][column].getEndingCol()+1] == 0;
+		}
+		else if(direction == -1)
+		{
+			return this.currentGame[row][this.vehicles[row][column].getStartingCol()-1] == 0;
+		}
+		return false;
+	}
 }

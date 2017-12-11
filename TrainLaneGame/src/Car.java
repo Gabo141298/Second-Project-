@@ -3,11 +3,10 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class Car extends Vehicle
-{
-	public final int weight = 1;
-	
-	public Car()
+{		
+	public Car(int startingCol)
 	{
+		super (startingCol);
 		try
         {
            this.obstacle = ImageIO.read( this.getClass().getResource("car.png") );
@@ -16,5 +15,6 @@ public class Car extends Vehicle
         {
            System.err.println(exception);
         }
+		this.weight = 1;
 	}
 }

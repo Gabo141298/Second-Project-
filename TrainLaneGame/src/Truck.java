@@ -4,10 +4,10 @@ import javax.imageio.ImageIO;
 
 public class Truck extends Vehicle
 {
-	public final int weight = 2;
 	
-	public Truck()
+	public Truck(int startingCol)
 	{
+		super (startingCol);
 		try
         {
            this.obstacle = ImageIO.read( this.getClass().getResource("ambulance.png") );
@@ -16,5 +16,6 @@ public class Truck extends Vehicle
         {
            System.err.println(exception);
         }
+		this.weight = 2;
 	}
 }
