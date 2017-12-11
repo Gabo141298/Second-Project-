@@ -6,7 +6,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
  
 import javax.imageio.ImageIO;
@@ -20,7 +19,6 @@ import javax.swing.Timer;
 public class ObstacleBoard extends JPanel implements ActionListener, MouseListener
 {
 	private ObstacleMatrix obstacleMatrix = null;
-    private BufferedImage obstacle = null;
     private Timer timerCarAnimation = null;
    
     private int movingCarX = 0;
@@ -33,15 +31,6 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
     {
        this.obstacleMatrix = new ObstacleMatrix( "level01.txt" );
        this.obstacleMatrix.run();
-       
-       try
-       {
-          this.obstacle = ImageIO.read( this.getClass().getResource("car.png") );
-       }
-       catch ( IOException exception )
-       {
-          System.err.println(exception);
-       }
        
        this.addMouseListener(this);
   
@@ -75,7 +64,7 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 		      {
 		         if ( row == this.movingCarRow && column == this.movingCarColumn )
 		         {
-		            g.drawImage(this.obstacle
+		            g.drawImage(this.obstacleMatrix.getObstacle(row, column)
 		                  , x + paddingHorizontal + this.movingCarX, y + paddingVertical
 		                  , cellWidth - 2 * paddingHorizontal, cellHeight - 2 * paddingVertical, null);
 		            this.movingCarX += MOVING_PIXELS * this.direction;
@@ -84,13 +73,13 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 		               this.timerCarAnimation.stop();
 		               this.movingCarX = 0;
 		               this.movingCarRow = this.movingCarColumn = MOVING_PIXELS * direction;
-		               obstacleMatrix.setObstacle(row, column, direction);
+		               obstacleMatrix.moveObstacle(row, column, direction);
 		            }
 		         }
 		         
 		         else
 		         {
-						g.drawImage(this.obstacle
+						g.drawImage(this.obstacleMatrix.getObstacle(row, column)
 		                  , x + paddingHorizontal, y + paddingVertical
 		                  , cellWidth - 2 * paddingHorizontal, cellHeight - 2 * paddingVertical, null);			
 		         }

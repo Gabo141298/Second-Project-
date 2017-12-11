@@ -1,3 +1,4 @@
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
@@ -11,7 +12,10 @@ public class ObstacleMatrix
 	/**     
 	 * Used to save the matrix data given from the input.     
 	 */    
-	private int currentGame[][] = null;        
+	private int currentGame[][] = null;   
+	
+	private Vehicle vehicles[][] = null;
+	
 	/**     
 	 * Used to save the minimum number of plays needed to clear the column     
 	 * for the train for each column.    
@@ -44,7 +48,8 @@ public class ObstacleMatrix
 		// Take the values from the standard input to give currentGame and playsPerColumn their dimensions.        
 		int rows = input.nextInt();        
 		int columns = input.nextInt();                
-		// Give currentGame and playsPerColumn their dimensions.        
+		// Give currentGame and playsPerColumn their dimensions.      
+		this.vehicles = new Vehicle[rows][columns];
 		currentGame = new int[rows][columns];        
 		playsPerColumn = new int[columns]; input.nextLine(); input.nextLine();                
 		// Reads and assigns the values from the standard input to the matrix.        
@@ -65,9 +70,21 @@ public class ObstacleMatrix
 		{            
 			for(int column = 0; column < currentGame[row].length; ++column)           
 			{                
-				currentGame[row][column] = input.nextInt();            
-			}        
-		}    
+				currentGame[row][column] = input.nextInt();
+			}
+			
+			for(int column = 0; column < vehicles[row].length; ++column)
+			{
+				if(currentGame[row][column] == 1)
+					vehicles[row][column] = new Car();
+				else if(currentGame[row][column] == 2)
+					vehicles[row][column] = new Truck();
+				else if(currentGame[row][column] == 3)
+					vehicles[row][column] = new Bus();
+				else
+					vehicles[row][column] = null;
+			}
+		}
 	}
 	
 	/**     
@@ -228,9 +245,21 @@ public class ObstacleMatrix
      * @Param the row and column to modify
      * @Param the direction on which the car is to be moved
      */
-    public void setObstacle(int row, int column, int direction)
+    public void moveObstacle(int row, int column, int direction)
     {
-			currentGame[row][column] = 0;
-			currentGame[row][column + direction] = 1;		
+    	for(int movements = 0; movements < vehicles[row][column].weight; ++movements)
+    	{
+    		currentGame[row][column + movements * direction + direction] = 
+    				vehicles[row][column + movements * direction].weight;
+			vehicles[row][column + movements * direction + direction] = 
+					vehicles[row][column + movements * direction];
+    	}
+		currentGame[row][column] = 0;
+		vehicles[row][column] = null;
 	}
+    
+    public BufferedImage getObstacle(int row, int column)
+    {
+    	return this.vehicles[row][column].getObstacle();
+    }
 }
