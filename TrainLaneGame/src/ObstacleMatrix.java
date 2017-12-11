@@ -78,9 +78,9 @@ public class ObstacleMatrix
 				if(currentGame[row][column] == 1)
 					vehicles[row][column] = new Car(column);
 				else if(currentGame[row][column] == 2)
-					vehicles[row][column] = vehicles[row][column++] = new Truck(column);
+					vehicles[row][column] = vehicles[row][++column] = new Truck(column-1);
 				else if(currentGame[row][column] == 3)
-					vehicles[row][column] = vehicles[row][column++] = vehicles[row][column++] = new Bus(column);
+					vehicles[row][column] = vehicles[row][++column] = vehicles[row][++column] = new Bus(column-2);
 				else
 					vehicles[row][column] = null;
 			}
@@ -253,7 +253,7 @@ public class ObstacleMatrix
     	for (int count = column; count < limit ; ++count )
     	{
     		vehicles [row][count] = null;
-        	currentGame[row][column]=0;
+        	currentGame[row][count]=0;
     		
     	}
     	limit = column + direction +  temp.getWeight();
@@ -262,6 +262,7 @@ public class ObstacleMatrix
     		vehicles [row][count] = temp;
     		currentGame[row][count]= tempNum;    		
     	}
+    	temp.move(direction);
 	}
     
     public BufferedImage getObstacle(int row, int column)

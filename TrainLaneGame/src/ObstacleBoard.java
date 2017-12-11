@@ -77,19 +77,48 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 							this.movingCarX = 0;
 							this.movingCarRow = this.movingCarColumn = MOVING_PIXELS * direction;
 							obstacleMatrix.moveObstacle(row, column, direction);
+							if(direction == 1)
+							{
+								int limit = obstacleSize -1 + direction;
+								for (int displacement = 0; displacement < limit; ++displacement)
+								{					
+									x = ++column * cellWidth;
+									g.drawRect(x, y, cellWidth, cellHeight);
+								}
+							}
+							if (direction == -1)
+							{
+								column--;
+								for (int displacement = 0; displacement < obstacleSize- 1; ++displacement)
+								{					
+									x = ++column * cellWidth;
+									g.drawRect(x, y, cellWidth, cellHeight);
+								}								
+							}
 						}
+						else
+						{
+							for (int displacement = 0; displacement < obstacleSize- 1; ++displacement)
+							{					
+								x = ++column * cellWidth;
+								g.drawRect(x, y, cellWidth, cellHeight);
+							}
+						}
+						
 					}
 					else
 					{					
 						g.drawImage(this.obstacleMatrix.getObstacle(row, column)
 								, x + paddingHorizontal, y + paddingVertical
-								, vehicleWidth - 2 * paddingHorizontal, cellHeight - 2 * paddingVertical, null);			
+								, vehicleWidth - 2 * paddingHorizontal, cellHeight - 2 * paddingVertical, null);
+						
+						for (int displacement = 0; displacement < obstacleSize- 1; ++displacement)
+						{					
+							x = ++column * cellWidth;
+							g.drawRect(x, y, cellWidth, cellHeight);
+						}
 					}
-					for (int displacement = 0; displacement < obstacleSize-1; ++displacement)
-					{					
-						x = ++column * cellWidth;
-						g.drawRect(x, y, cellWidth, cellHeight);
-					}
+
 				}
 			}
 		}

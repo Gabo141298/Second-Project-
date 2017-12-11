@@ -52,5 +52,11 @@ public class Vehicle
 	{
 		return this.endingCol;
 	}
+
+	public void move(int direction) 
+	{
+		this.startingCol += direction;
+		this.endingCol += direction;		
+	}
 	
 }
