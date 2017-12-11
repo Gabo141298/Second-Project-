@@ -6,11 +6,7 @@ public class Vehicle
 	
 	protected int direction = 0;
 	
-	protected int weight = 0;
-	
-	protected boolean hasBeenpainted = false;
-	
-	protected boolean isMoving = false;
+	protected int weight = 0;	
 	
 	protected int startingCol = 0;
 	
@@ -19,7 +15,6 @@ public class Vehicle
 	public Vehicle(int startingCol)
 	{
 		this.startingCol = startingCol;
-		this.endingCol = this.startingCol + this.weight-1;
 	}
 	
 	/**
@@ -58,13 +53,4 @@ public class Vehicle
 		return this.endingCol;
 	}
 	
-	public boolean getMovement()
-	{
-		return this.isMoving;
-	}
-	
-	public void setMovement(boolean movement)
-	{
-		this.isMoving = movement;
-	}
 }

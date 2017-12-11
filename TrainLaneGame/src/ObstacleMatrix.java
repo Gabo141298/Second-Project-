@@ -78,9 +78,9 @@ public class ObstacleMatrix
 				if(currentGame[row][column] == 1)
 					vehicles[row][column] = new Car(column);
 				else if(currentGame[row][column] == 2)
-					vehicles[row][column] = vehicles[row][++column] = new Truck(column);
+					vehicles[row][column] = vehicles[row][++column] = new Truck(column-1);
 				else if(currentGame[row][column] == 3)
-					vehicles[row][column] = vehicles[row][++column] = vehicles[row][++column] = new Bus(column);
+					vehicles[row][column] = vehicles[row][++column] = vehicles[row][++column] = new Bus(column-2);
 				else
 					vehicles[row][column] = null;
 			}
@@ -248,13 +248,19 @@ public class ObstacleMatrix
     public void moveObstacle(int row, int column, int direction)
     {
     	Vehicle temp =  vehicles[row][column];
-    	vehicles [row][column]= null;
     	int tempNum = currentGame [row][column];
-    	
-    	for (int count = column; count < vehicles[row][column].getWeight(); count+= direction )
+    	int limit = column + vehicles[row][column].getWeight();
+    	for (int count = column; count < limit ; ++count )
+    	{
+    		vehicles [row][count] = null;
+        	currentGame[row][column]=0;
+    		
+    	}
+    	limit = column + direction +  temp.getWeight();
+    	for (int count = column + direction; count < limit ; ++count )
     	{
     		vehicles [row][count] = temp;
-    		
+    		currentGame[row][count]= tempNum;    		
     	}
 	}
     
@@ -270,7 +276,7 @@ public class ObstacleMatrix
 	{
 		return this.vehicles[row][column].getStartingCol();
 	}
-	public boolean canMoveFrom(int row, int column, int direction) 
+	public boolean canMoveTo(int row, int column, int direction) 
 	{
 		if (direction == 1)
 		{
@@ -278,7 +284,7 @@ public class ObstacleMatrix
 		}
 		else if(direction == -1)
 		{
-			return this.currentGame[row][this.vehicles[row][column].getStartingCol()-1] == 0;
+			return this.currentGame[row][column -1] == 0;
 		}
 		return false;
 	}

@@ -16,5 +16,6 @@ public class Bus extends Vehicle
            System.err.println(exception);
         }
 		this.weight = 3;
+		this.endingCol = this.startingCol + this.weight-1;
 	}
 }

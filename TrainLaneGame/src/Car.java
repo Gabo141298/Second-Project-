@@ -16,5 +16,6 @@ public class Car extends Vehicle
            System.err.println(exception);
         }
 		this.weight = 1;
+		this.endingCol = this.startingCol + this.weight-1;
 	}
 }

@@ -82,7 +82,7 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 								, x + paddingHorizontal, y + paddingVertical
 								, vehicleWidth - 2 * paddingHorizontal, cellHeight - 2 * paddingVertical, null);			
 					}
-					for (int displacement = 0; displacement < obstacleSize - 1; ++displacement)
+					for (int displacement = 0; displacement < obstacleSize-1; ++displacement)
 					{					
 						x = ++column * cellWidth;
 						g.drawRect(x, y, cellWidth, cellHeight);
@@ -116,7 +116,6 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 		{
 			int cellWidth = this.getWidth() / obstacleMatrix.getColumnCount();
 			int cellHeight = this.getHeight() / obstacleMatrix.getRowCount();
-
 			int row = event.getY() / cellHeight;
 			int column = event.getX() / cellWidth;
 			System.out.printf("mouseClicked(%d,%d)%n", event.getX(), event.getY());
@@ -126,21 +125,22 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 			switch (carWidth)
 			{
 				case 1: this.direction = event.getX() % cellWidth > 40 ? 1 : -1; break;
-				case 2: this.direction = column - obstacleMatrix.getStartColumn(row, column) == 0 ? 1 : -1 ;break;
+				case 2: this.direction = column - obstacleMatrix.getStartColumn(row, column) == 0 ? -1 : 1 ;break;
 				case 3: 
 					if (column - obstacleMatrix.getStartColumn(row, column) == 0)
-						this.direction = 1;
-					else if(column - obstacleMatrix.getStartColumn(row, column)-2 == 0)
 						this.direction = -1;
+					else if(column - obstacleMatrix.getStartColumn(row, column)-2 == 0)
+						this.direction = 1;
 					else
 						this.direction = event.getX() % cellWidth > 40 ? 1 : -1;
 					break;
 			}
-			System.out.printf("The direction is %d%n", this.direction);
-			if(!(obstacleMatrix.canMoveFrom(row, column, direction)))
+			System.out.printf("The direction is %d%n", this.direction);			
+			if((obstacleMatrix.canMoveTo(row, obstacleMatrix.getStartColumn(row, column), direction)))
 			{
 				this.movingCarRow = row;
-				this.movingCarColumn = column;
+				this.movingCarColumn = obstacleMatrix.getStartColumn(row, column);
+				System.out.printf("The coordinates are(%d,%d)%n", movingCarRow+1, movingCarColumn+1);
 				this.movingCarX = MOVING_PIXELS * direction;
 				this.timerCarAnimation.start();
 			}

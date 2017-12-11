@@ -17,5 +17,6 @@ public class Truck extends Vehicle
            System.err.println(exception);
         }
 		this.weight = 2;
+		this.endingCol = this.startingCol + this.weight-1;
 	}
 }
