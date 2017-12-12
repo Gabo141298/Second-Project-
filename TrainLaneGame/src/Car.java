@@ -4,9 +4,14 @@ import javax.imageio.ImageIO;
 
 public class Car extends Vehicle
 {		
-	public Car(int startingCol)
+	
+	/**
+	 * It calls the superclass constructor and sets the obstacle.
+	 * @param leftSide used to set the leftSide form the superclass constructor.
+	 */
+	public Car(int leftSide)
 	{
-		super (startingCol);
+		super (leftSide);
 		try
         {
            this.obstacle = ImageIO.read( this.getClass().getResource("car.png") );
@@ -16,6 +21,6 @@ public class Car extends Vehicle
            System.err.println(exception);
         }
 		this.weight = 1;
-		this.endingCol = this.startingCol + this.weight-1;
+		this.rightSide = this.leftSide + this.weight - 1;
 	}
 }

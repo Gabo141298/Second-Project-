@@ -16,9 +16,14 @@ public class ObstacleMatrix
 	
 	private Vehicle vehicles[][] = null;
 	
+	private int energySpent = 0;
+	
+	private boolean levelBeaten = false;
+	
 	/**     
 	 * Used to save the minimum number of plays needed to clear the column     
 	 * for the train for each column.    
+	 * It loads a file with the level.
 	 */    
 	private int playsPerColumn[] = null;
 	
@@ -78,9 +83,9 @@ public class ObstacleMatrix
 				if(currentGame[row][column] == 1)
 					vehicles[row][column] = new Car(column);
 				else if(currentGame[row][column] == 2)
-					vehicles[row][column] = vehicles[row][++column] = new Truck(column-1);
+					vehicles[row][column] = vehicles[row][++column] = new Truck(column - 1);
 				else if(currentGame[row][column] == 3)
-					vehicles[row][column] = vehicles[row][++column] = vehicles[row][++column] = new Bus(column-2);
+					vehicles[row][column] = vehicles[row][++column] = vehicles[row][++column] = new Bus(column - 2);
 				else
 					vehicles[row][column] = null;
 			}
@@ -215,6 +220,39 @@ public class ObstacleMatrix
 	}        
 	
 	/**
+	 * It gets the energy spent by the player.
+	 * @return the energy spent by the player.
+	 */
+	public int getEnergySpent()
+	{
+		return this.energySpent;
+	}
+	
+	/**
+	 * It checks a column to know if the level has been beaten
+	 * @param column used to check if the column is empty.
+	 */
+	public void checkColumn(int column)
+	{
+		boolean clearColumn = true;
+		for(int row = 0; row < vehicles.length && clearColumn; ++row)
+		{
+			if(vehicles[row][column] != null)
+				clearColumn = false;
+		}
+		levelBeaten = clearColumn;
+	}
+	
+	/**
+	 * It returns if the level has been beaten.
+	 * @return true if the level has been beaten, false if not.
+	 */
+	public boolean levelHasBeenBeaten()
+	{
+		return this.levelBeaten;
+	}
+	
+	/**
 	 * Gets the column amount on this game matrix
 	 * @Return the column count on the game matrix
 	 */
@@ -236,8 +274,8 @@ public class ObstacleMatrix
 	 */
 	public boolean hasObstacleIn(int row, int column)
     {
-		if (column >=0 && column < currentGame[row].length)
-			return currentGame[row][column] > 0;
+		if (column >=0 && column < vehicles[row].length)
+			return vehicles[row][column] != null;
 		return true;
     }
     /**
@@ -247,6 +285,7 @@ public class ObstacleMatrix
      */
     public void moveObstacle(int row, int column, int direction)
     {
+    	this.energySpent += vehicles[row][column].getWeight();
     	Vehicle temp =  vehicles[row][column];
     	int tempNum = currentGame [row][column];
     	int limit = column + vehicles[row][column].getWeight();
@@ -263,29 +302,75 @@ public class ObstacleMatrix
     		currentGame[row][count]= tempNum;    		
     	}
     	temp.move(direction);
+    	
+    	if(direction == 1)
+    		this.checkColumn(temp.getLeftSide() - 1);
+    	else if(direction == -1)
+    		this.checkColumn(temp.getRightSide() + 1);
 	}
     
+    /**
+     * It returns the the image of the obstacle for a specific vehicle.
+     * @param row used to locate the vehicle.
+     * @param column used to locate the vehicle.
+     * @return the BufferedImage of the specific vehicle.
+     */
     public BufferedImage getObstacle(int row, int column)
     {
     	return this.vehicles[row][column].getObstacle();
     }
-	public int getWeigth(int row, int column) 
+    
+    /**
+     * It gets the energy required to move a specific vehicle.
+     * @param row used to locate the vehicle.
+     * @param column used to locate the vehicle.
+     * @return the energy required to move a specific vehicle.
+     */
+	public int getWeight(int row, int column) 
 	{
 		return this.vehicles[row][column].getWeight();
 	}
-	public int getStartColumn(int row, int column) 
+	
+	/**
+	 * It gets the column where the left part of the vehicle stands.
+	 * @param row used to locate the vehicle.
+	 * @param column used to locate vehicle.
+	 * @return the column where the left part of the vehicle stands.
+	 */
+	public int getLeftSide(int row, int column) 
 	{
-		return this.vehicles[row][column].getStartingCol();
+		return this.vehicles[row][column].getLeftSide();
 	}
+	
+	/**
+	 * It gets the column where the right part of the vehicle stands.
+	 * @param row used to locate the vehicle.
+	 * @param column used to locate vehicle.
+	 * @return the column where the right part of the vehicle stands.
+	 */
+	public int getRightSide(int row, int column)
+	{
+		return this.vehicles[row][column].getRightSide();
+	}
+	
+	/**
+	 * Checks if the vehicle can move in a certain direction.
+	 * @param row used to locate the vehicle.
+	 * @param column used to locate the vehicle.
+	 * @param direction used to know if the vehicle is going to the left or right.
+	 * @return true if the vehicle can move to the side, false if not.
+	 */
 	public boolean canMoveTo(int row, int column, int direction) 
 	{
+		if(column + direction == vehicles[row].length || column + direction < 0)
+			return false;
 		if (direction == 1)
 		{
-			return this.currentGame[row][this.vehicles[row][column].getEndingCol()+1] == 0;
+			return this.vehicles[row][this.vehicles[row][column].getRightSide() + 1] == null;
 		}
 		else if(direction == -1)
 		{
-			return this.currentGame[row][column -1] == 0;
+			return this.vehicles[row][column - 1] == null;
 		}
 		return false;
 	}

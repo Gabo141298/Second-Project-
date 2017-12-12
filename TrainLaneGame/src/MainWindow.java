@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.Timer;
@@ -17,8 +18,10 @@ import javax.swing.Timer;
 public class MainWindow extends JFrame implements ActionListener
 {
 	private Timer elapsedTime = null;
-	private long elapsedSeconds = 0;
+	private long elapsedSeconds = -1;
 	private JLabel labelLevel = null;
+	private JLabel labelEnergy = null;
+	private ObstacleBoard obstacleBoard = null;
 	
 	/**
 	 * Constructor for the MainWindow class. It sets the title of the window as "Train Lane Game".
@@ -45,7 +48,7 @@ public class MainWindow extends JFrame implements ActionListener
 	 */
 	private void createObstacleBoard()
 	{
-		ObstacleBoard obstacleBoard = new ObstacleBoard();
+		obstacleBoard = new ObstacleBoard();
 		this.add(obstacleBoard, BorderLayout.CENTER);
 	}
 	
@@ -65,7 +68,7 @@ public class MainWindow extends JFrame implements ActionListener
 		labelLevel.setFont(font);
 		indicators.add(labelLevel, BorderLayout.WEST);
 		
-		JLabel labelEnergy = new JLabel("Energy: 0");
+		labelEnergy = new JLabel("Energy: 0");
 		labelEnergy.setFont(font);
 		indicators.add(labelEnergy, BorderLayout.EAST);
 		
@@ -81,6 +84,22 @@ public class MainWindow extends JFrame implements ActionListener
 		{
 			this.updateElapsedTime();
 		}
+		
+		if(this.obstacleBoard.levelHasBeenBeaten())
+		{
+			Object[] options = {"Play again", "Play next level"};
+			int option = JOptionPane.showOptionDialog(null, "Congratulations on beating the level", "Congratulations", 
+					JOptionPane.YES_NO_OPTION, 
+					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			if(option == 1)
+			{
+				this.obstacleBoard.nextLevel();
+			}
+			this.obstacleBoard.loadLevel();
+			this.elapsedSeconds = -1;
+			this.elapsedTime.restart();
+			
+		}
 	}
 	/**
 	 * Shows the elapsed time on the in game label
@@ -90,8 +109,10 @@ public class MainWindow extends JFrame implements ActionListener
 		++this.elapsedSeconds;
 		long minutes = this.elapsedSeconds / 60;
 		long seconds = this.elapsedSeconds % 60;		
-		int level = 1;
+		int level = this.obstacleBoard.getCurrentLevel();
 		String text = String.format("Level: %d. Time %02d:%02d", level , minutes, seconds);
 		this.labelLevel.setText(text);
+		text = String.format("Energy: %02d", obstacleBoard.getEnergySpent());
+		this.labelEnergy.setText(text);
 	}
 }

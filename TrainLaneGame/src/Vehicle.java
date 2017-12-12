@@ -8,18 +8,22 @@ public class Vehicle
 	
 	protected int weight = 0;	
 	
-	protected int startingCol = 0;
+	protected int leftSide = 0;
 	
-	protected int endingCol = 0;
+	protected int rightSide = 0;
 	
-	public Vehicle(int startingCol)
+	/**
+	 * Constructor of the class Vehicle.
+	 * @param startingCol used to set the column where the left side is.
+	 */
+	public Vehicle(int leftSide)
 	{
-		this.startingCol = startingCol;
+		this.leftSide = leftSide;
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * It gets the BufferedImage for the vehicle.
+	 * @return the BufferedImage for the vehicle.
 	 */
 	public BufferedImage getObstacle()
 	{
@@ -27,36 +31,58 @@ public class Vehicle
 	}
 	
 	/**
-	 * 
-	 * @param direction
+	 * It sets the direction where the vehicle is going (1 to the right, -1 to the left).
+	 * @param direction where it is going.
 	 */
 	public void setDirection(int direction)
 	{
 		this.direction = direction;
 	}
 	
+	/**
+	 * It gets the current direction of the vehicle.
+	 * @return the direction of the vehicle.
+	 */
 	public int getDirection()
 	{
 		return this.direction;
 	}
+	
+	/**
+	 * It gets the energy required to move the vehicle.
+	 * @return the energy required to move the vehicle.
+	 */
 	public int getWeight()
 	{
 		return this.weight;
 	}
-	public int getStartingCol()
+	
+	/**
+	 * It gets the column where the left side of the vehicle is.
+	 * @return the column where the left side of the vehicle is.
+	 */
+	public int getLeftSide()
 	{
-		return this.startingCol;
+		return this.leftSide;
 	}
 	
-	public int getEndingCol()
+	/**
+	 * It gets the column where the right side of the vehicle is.
+	 * @return the column where the right side of the vehicle is.
+	 */
+	public int getRightSide()
 	{
-		return this.endingCol;
+		return this.rightSide;
 	}
 
+	/**
+	 * It changes the values of the leftSide and rightSide according to the direction.
+	 * @param direction
+	 */
 	public void move(int direction) 
 	{
-		this.startingCol += direction;
-		this.endingCol += direction;		
+		this.leftSide += direction;
+		this.rightSide += direction;		
 	}
 	
 }
