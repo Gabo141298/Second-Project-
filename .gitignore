@@ -2,7 +2,5 @@
 *.class
 docs/
 TrainLaneGame/bin/
-*.classpath
-*.project
 /bin/
 /.metadata/
