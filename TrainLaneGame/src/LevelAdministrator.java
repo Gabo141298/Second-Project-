@@ -1,9 +1,19 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.net.URISyntaxException;
+import java.util.Scanner;
 
 public class LevelAdministrator 
 {
 	private int currentLevel = 0;
 	
 	private final int TOTAL_LEVELS = 2;
+	
+	private String[] levelStars = new String[TOTAL_LEVELS+1];
+	
+	private File levelStatusFile = null;
+	
+	private Scanner levelRecord = null;
 	
 	/**
 	 * Constructor of LevelAdministrator.
@@ -12,8 +22,30 @@ public class LevelAdministrator
 	public LevelAdministrator()
 	{
 		this(1);
+		this.loadLevelStatus();
+		for (int readingLevel = 1; readingLevel< levelStars.length; ++readingLevel)
+		{
+			this.levelStars[readingLevel]= levelRecord.next();
+		}
 	}
 	
+	private void loadLevelStatus() 
+	{
+		try
+		{
+			this.levelStatusFile = new File( this.getClass().getResource("LevelRecord.txt").toURI() );
+			this.levelRecord = new Scanner(levelStatusFile);
+		}
+		catch(FileNotFoundException exception)
+		{
+			System.err.println(exception);
+		} 
+		catch (URISyntaxException exception) 
+		{
+			System.err.println(exception);
+		}		
+	}
+
 	/**
 	 * Constructor of LevelAdministrator.
 	 * It sets the current level according to the parameter.
@@ -31,6 +63,11 @@ public class LevelAdministrator
 	{
 		if(++currentLevel > TOTAL_LEVELS)
 			currentLevel = 1;
+	}
+	
+	public void setLevel(int newLevel)
+	{
+		this.currentLevel = newLevel;
 	}
 	
 	/**
@@ -65,5 +102,15 @@ public class LevelAdministrator
 		text = text + level + ".txt";
 		
 		return text;
+	}
+
+	public String[] getLevelArray() 
+	{
+		String[] levelArray = new String [this.TOTAL_LEVELS +1];
+		for (int count = 1; count< levelArray.length; ++count)
+		{
+			levelArray[count] = String.format("%d", count);
+		}
+		return levelArray;
 	}
 }
