@@ -1,5 +1,3 @@
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,12 +19,16 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 	private LevelAdministrator levelAdministrator = null;
 	private ObstacleMatrix obstacleMatrix = null;
 	private Timer timerCarAnimation = null;
+	private Timer timerTrainLaneAnimation = null;
+	private int paintedLanes = 0;
 
 	private int movingCarX = 0;
 	private int movingCarRow = -1;
 	private int movingCarColumn = -1;
 	private int direction = 0;
 	private static final int MOVING_PIXELS = 2;
+	private BufferedImage trainLaneImg = null;
+	private boolean isTrainLaneAnimationDone = false;
 
 	public ObstacleBoard()
 	{
@@ -38,6 +40,15 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 		this.addMouseListener(this);
 
 		this.timerCarAnimation = new Timer(33, this);
+		this.timerTrainLaneAnimation = new Timer(120, this);
+		try
+		{	
+			this.trainLaneImg = ImageIO.read( this.getClass().getResource("TrainLane.png"));		
+		}
+		catch (IOException exception) 
+		{
+			System.out.println(exception);
+		}
 	}
 
 	// Override paintComponent to perform your own painting
@@ -47,82 +58,199 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 	 * @param g used to change how the obstacle board looks.
 	 */
 	@Override public void paintComponent(Graphics g)
-	{
+	{		
 		super.paintComponent(g);     // paint parent's background
 		int cellWidth = this.getWidth() / obstacleMatrix.getColumnCount();
 		int cellHeight = this.getHeight() / obstacleMatrix.getRowCount();		
 		int paddingHorizontal = (int)(cellWidth * 0.1);
 		int paddingVertical = (int)(cellHeight * 0.2);
-
+		paintObstacleBoard(cellWidth, cellHeight, paddingHorizontal, paddingVertical, g);
+	}
+		
+	/**
+	 * Calls the methods for the painting of the cells and the obstacles on the obstacle board.
+	 * @param cellWidth
+	 * @param cellHeight
+	 * @param paddingHorizontal
+	 * @param paddingVertical
+	 * @param g
+	 */
+	private void paintObstacleBoard(int cellWidth, int cellHeight, int paddingHorizontal, int paddingVertical,
+		Graphics g) 
+	{
 		for ( int row = 0; row < obstacleMatrix.getRowCount(); ++row )
 		{
 			for ( int column = 0; column < obstacleMatrix.getColumnCount(); ++column )
 			{
-				int y = row * cellHeight;
-				int x = column * cellWidth;
-				g.drawRect(x, y, cellWidth, cellHeight);
+				paintCell(row, column, cellHeight, cellWidth, g);							
 				if ( obstacleMatrix.hasObstacleIn(row, column))
 				{
-					int obstacleSize = obstacleMatrix.getWeight(row, column);
-					int vehicleWidth = cellWidth *  obstacleSize;	
-					if ( row == this.movingCarRow && column == this.movingCarColumn )
-					{											
-						g.drawImage(this.obstacleMatrix.getObstacle(row, column)
-								, x + paddingHorizontal + this.movingCarX, y + paddingVertical
-								, vehicleWidth - 2 * paddingHorizontal, cellHeight - 2 * paddingVertical, null);
-						this.movingCarX += MOVING_PIXELS * this.direction;
-						if ( Math.abs(this.movingCarX) > cellWidth )
-						{
-							this.timerCarAnimation.stop();
-							this.movingCarX = 0;
-							this.movingCarRow = this.movingCarColumn = MOVING_PIXELS * direction;
-							obstacleMatrix.moveObstacle(row, column, direction);
-							if(direction == 1)
-							{
-								int limit = obstacleSize -1 + direction;
-								for (int displacement = 0; displacement < limit; ++displacement)
-								{					
-									x = ++column * cellWidth;
-									g.drawRect(x, y, cellWidth, cellHeight);
-								}
-							}
-							if (direction == -1)
-							{
-								column--;
-								for (int displacement = 0; displacement < obstacleSize- 1; ++displacement)
-								{					
-									x = ++column * cellWidth;
-									g.drawRect(x, y, cellWidth, cellHeight);
-								}								
-							}
-						}
-						else
-						{
-							for (int displacement = 0; displacement < obstacleSize- 1; ++displacement)
-							{					
-								x = ++column * cellWidth;
-								g.drawRect(x, y, cellWidth, cellHeight);
-							}
-						}
-						
-					}
-					else
-					{					
-						g.drawImage(this.obstacleMatrix.getObstacle(row, column)
-								, x + paddingHorizontal, y + paddingVertical
-								, vehicleWidth - 2 * paddingHorizontal, cellHeight - 2 * paddingVertical, null);
-						
-						for (int displacement = 0; displacement < obstacleSize- 1; ++displacement)
-						{					
-							x = ++column * cellWidth;
-							g.drawRect(x, y, cellWidth, cellHeight);
-						}
-					}
-
+					column = paintObstacles(row, column, g, cellWidth, cellHeight, paddingHorizontal, paddingVertical);
 				}
+				
 			}
 		}
+		if(this.timerTrainLaneAnimation.isRunning())
+		{
+			paintTrainLane(this.obstacleMatrix.columnLevelHasBeenBeaten(), g, cellWidth, cellHeight );
+		}
+	}		
+	private void paintTrainLane(int column, Graphics g, int cellWidth, int cellHeight) 
+	{	
+		if (this.paintedLanes <= obstacleMatrix.getRowCount())
+		{
+			for (int row = 0; row <= this.paintedLanes; ++ row)
+			{
+				int paddingHorizontal = (int)(cellWidth * 0.05);
+				g.drawImage(this.trainLaneImg,
+						calculateXY(column, cellWidth) + paddingHorizontal, 
+						calculateXY(row,cellHeight),
+						cellWidth - 2 * paddingHorizontal,
+						cellHeight ,
+						null);
+			}
+		}
+		else
+		{
+			this.timerTrainLaneAnimation.stop();
+			this.isTrainLaneAnimationDone  = true;
+		}
+		this.paintedLanes ++;
 	}
+
+	/**
+	 * Paints a single rectangular cell on the Obstacle Board
+	 * @param row
+	 * @param column
+	 * @param cellHeight
+	 * @param cellWidth
+	 * @param g
+	 */
+	private void paintCell(int row, int column, int cellHeight, int cellWidth, Graphics g) 
+	{
+		int y = calculateXY(row,cellHeight);
+		int x = calculateXY(column, cellWidth);
+		g.drawRect(x, y, cellWidth, cellHeight);		
+	}
+	/**
+	 * Calculates either the x or y coordinates for a cell, based on the cell number and the cell's size
+	 * @param cells
+	 * @param cellSize
+	 * @return
+	 */
+	private int calculateXY(int cells, int cellSize)
+	{
+		return cells * cellSize;
+	}
+	
+	/**
+	 * Paints the obstacles on the obstacle board
+	 * @param row
+	 * @param column
+	 * @param g
+	 * @param cellWidth
+	 * @param cellHeight
+	 * @param paddingHorizontal
+	 * @param paddingVertical
+	 * @return
+	 */
+	private int paintObstacles(int row, int column, Graphics g, int cellWidth, int cellHeight, int paddingHorizontal,
+			int paddingVertical) 
+	{
+		int obstacleSize = obstacleMatrix.getWeight(row, column);
+		int vehicleWidth = cellWidth *  obstacleSize;	
+		if ( row == this.movingCarRow && column == this.movingCarColumn )
+		{
+			column = paintMovingCar(row, column, g, cellWidth, cellHeight, paddingHorizontal, paddingVertical, obstacleSize, vehicleWidth);
+		}
+		else
+		{
+			column = printStaticCar(row, column, g, cellWidth, cellHeight, paddingHorizontal, paddingVertical, obstacleSize, vehicleWidth);
+		}
+		return column;
+	}
+	
+	/**
+	 * Paints a car that is moving on the Obstacle board
+	 * Returns the column, with the modifications on it made by the method
+	 * @param row
+	 * @param column
+	 * @param g
+	 * @param cellWidth
+	 * @param cellHeight
+	 * @param paddingHorizontal
+	 * @param paddingVertical
+	 * @param obstacleSize
+	 * @param vehicleWidth
+	 * @return column
+	 */
+	private int paintMovingCar(int row, int column, Graphics g, int cellWidth, int cellHeight, int paddingHorizontal,
+			int paddingVertical, int obstacleSize, int vehicleWidth) 
+	{
+		g.drawImage(this.obstacleMatrix.getObstacle(row, column)
+				, calculateXY(column, cellWidth) + paddingHorizontal + this.movingCarX, calculateXY(row,cellHeight) + paddingVertical
+				, vehicleWidth - 2 * paddingHorizontal, cellHeight - 2 * paddingVertical, null);
+		this.movingCarX += MOVING_PIXELS * this.direction;
+		if ( Math.abs(this.movingCarX) > cellWidth )
+		{
+			this.timerCarAnimation.stop();
+			this.movingCarX = 0;
+			this.movingCarRow = this.movingCarColumn = MOVING_PIXELS * direction;
+			obstacleMatrix.moveObstacle(row, column, direction);
+			if(direction == 1)
+			{
+				int limit = obstacleSize -1 + direction;
+				for (int displacement = 0; displacement < limit; ++displacement)
+				{
+					paintCell(row, ++column, cellHeight, cellWidth, g);
+				}
+			}
+			if (direction == -1)
+			{
+				column--;
+				for (int displacement = 0; displacement < obstacleSize- 1; ++displacement)
+				{					
+					paintCell(row, ++column, cellHeight, cellWidth, g);
+				}								
+			}
+		}
+		else
+		{
+			for (int displacement = 0; displacement < obstacleSize- 1; ++displacement)
+			{					
+				paintCell(row, ++column, cellHeight, cellWidth, g);
+			}
+		}
+		return column;
+	}
+	/**
+	 * Paints a car that is not moving on the Obstacle board
+	 * Returns the column, with the modifications on it made by the method
+	 * @param row
+	 * @param column
+	 * @param g
+	 * @param cellWidth
+	 * @param cellHeight
+	 * @param paddingHorizontal
+	 * @param paddingVertical
+	 * @param obstacleSize
+	 * @param vehicleWidth
+	 * @return column
+	 */
+	private int printStaticCar(int row, int column, Graphics g, int cellWidth, int cellHeight, int paddingHorizontal,
+			int paddingVertical, int obstacleSize, int vehicleWidth)
+	{
+		g.drawImage(this.obstacleMatrix.getObstacle(row, column)
+				, calculateXY(column, cellWidth) + paddingHorizontal, calculateXY(row,cellHeight) + paddingVertical
+				, vehicleWidth - 2 * paddingHorizontal, cellHeight - 2 * paddingVertical, null);
+		
+		for (int displacement = 0; displacement < obstacleSize- 1; ++displacement)
+		{					
+			paintCell(row, ++column, cellHeight, cellWidth, g);
+		}
+		return column;
+	}
+										
 	
 	/**
 	 * It gets the energy spent by the player.
@@ -152,11 +280,12 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 	
 	/**
 	 * It asks the model if the level has been beaten.
+	 * If it has, starts the animation for the train lane
 	 * @return true if the level has been beaten, false if not.
 	 */
 	public boolean levelHasBeenBeaten()
 	{
-		return this.obstacleMatrix.levelHasBeenBeaten();
+		return this.obstacleMatrix.columnLevelHasBeenBeaten()>=0;
 	}
 	
 	/**
@@ -176,6 +305,10 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 	public void actionPerformed(ActionEvent event)
 	{
 		if ( event.getSource() == this.timerCarAnimation )
+		{
+			this.repaint();
+		}
+		if(event.getSource() == this.timerTrainLaneAnimation)
 		{
 			this.repaint();
 		}
@@ -204,6 +337,28 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 					this.direction = event.getX() % cellWidth > 40 ? 1 : -1;
 				break;
 		}
+	}
+	/**
+	 * Starts the train lane animation for solving a level
+	 */
+	public void doWinAnimation()
+	{
+		this.paintedLanes = 0;
+		this.isTrainLaneAnimationDone = false;
+		this.timerTrainLaneAnimation.start();
+		
+	}
+	/**
+	 * Checks if the animation for the train lane is already over
+	 * @return animation status
+	 */
+	public boolean hasFinishedAnimation() 
+	{
+		return this.isTrainLaneAnimationDone;
+	}
+	public boolean isDoingTrainLaneAnimation() 
+	{
+		return this.timerTrainLaneAnimation.isRunning();
 	}
 
 	/**
@@ -238,6 +393,8 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 			}
 		}
 	}
+
+	
 
 	/**
 	 * Not used.
@@ -278,4 +435,8 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 		// TODO Auto-generated method stub
 		// System.out.printf("mouseExited(%d,%d)%n", event.getX(), event.getY());
 	}
+
+
+
+
 }

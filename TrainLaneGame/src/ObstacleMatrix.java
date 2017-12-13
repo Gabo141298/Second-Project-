@@ -14,11 +14,11 @@ public class ObstacleMatrix
 	 */    
 	private int currentGame[][] = null;   
 	
-	private Vehicle vehicles[][] = null;
+	private Obstacle vehicles[][] = null;
 	
 	private int energySpent = 0;
 	
-	private boolean levelBeaten = false;
+	private int levelBeaten = -1;
 	
 	/**     
 	 * Used to save the minimum number of plays needed to clear the column     
@@ -54,7 +54,7 @@ public class ObstacleMatrix
 		int rows = input.nextInt();        
 		int columns = input.nextInt();                
 		// Give currentGame and playsPerColumn their dimensions.      
-		this.vehicles = new Vehicle[rows][columns];
+		this.vehicles = new Obstacle[rows][columns];
 		currentGame = new int[rows][columns];        
 		playsPerColumn = new int[columns]; input.nextLine(); input.nextLine();                
 		// Reads and assigns the values from the standard input to the matrix.        
@@ -234,20 +234,21 @@ public class ObstacleMatrix
 	 */
 	public void checkColumn(int column)
 	{
-		boolean clearColumn = true;
-		for(int row = 0; row < vehicles.length && clearColumn; ++row)
+		int clearColumn = column;
+		for(int row = 0; row < vehicles.length && clearColumn>=0; ++row)
 		{
 			if(vehicles[row][column] != null)
-				clearColumn = false;
+				clearColumn = -1;
 		}
 		levelBeaten = clearColumn;
+			
 	}
 	
 	/**
 	 * It returns if the level has been beaten.
 	 * @return true if the level has been beaten, false if not.
 	 */
-	public boolean levelHasBeenBeaten()
+	public int columnLevelHasBeenBeaten()
 	{
 		return this.levelBeaten;
 	}
@@ -286,7 +287,7 @@ public class ObstacleMatrix
     public void moveObstacle(int row, int column, int direction)
     {
     	this.energySpent += vehicles[row][column].getWeight();
-    	Vehicle temp =  vehicles[row][column];
+    	Obstacle temp =  vehicles[row][column];
     	int tempNum = currentGame [row][column];
     	int limit = column + vehicles[row][column].getWeight();
     	for (int count = column; count < limit ; ++count )

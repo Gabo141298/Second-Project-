@@ -1,6 +1,6 @@
 import java.awt.image.BufferedImage;
 
-public class Vehicle 
+public class Obstacle 
 {
 	protected BufferedImage obstacle = null;
 	
@@ -16,7 +16,7 @@ public class Vehicle
 	 * Constructor of the class Vehicle.
 	 * @param startingCol used to set the column where the left side is.
 	 */
-	public Vehicle(int leftSide)
+	public Obstacle(int leftSide)
 	{
 		this.leftSide = leftSide;
 	}

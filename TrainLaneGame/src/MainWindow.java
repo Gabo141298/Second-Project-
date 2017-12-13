@@ -87,17 +87,22 @@ public class MainWindow extends JFrame implements ActionListener
 		
 		if(this.obstacleBoard.levelHasBeenBeaten())
 		{
-			Object[] options = {"Play again", "Play next level"};
-			int option = JOptionPane.showOptionDialog(null, "Congratulations on beating the level", "Congratulations", 
-					JOptionPane.YES_NO_OPTION, 
-					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-			if(option == 1)
+			if(!obstacleBoard.hasFinishedAnimation()&& !obstacleBoard.isDoingTrainLaneAnimation())
+				this.obstacleBoard.doWinAnimation();
+			else
 			{
-				this.obstacleBoard.nextLevel();
+				Object[] options = { "Play next level", "Play again"};
+				int option = JOptionPane.showOptionDialog(null, "Congratulations on beating the level", "Congratulations", 
+						JOptionPane.YES_NO_OPTION, 
+						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				if(option == 0)
+				{
+					this.obstacleBoard.nextLevel();
+				}
+				this.obstacleBoard.loadLevel();
+				this.elapsedSeconds = -1;
+				this.elapsedTime.restart();
 			}
-			this.obstacleBoard.loadLevel();
-			this.elapsedSeconds = -1;
-			this.elapsedTime.restart();
 			
 		}
 	}

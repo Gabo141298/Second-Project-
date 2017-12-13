@@ -2,7 +2,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-public class Truck extends Vehicle
+public class Truck extends Obstacle
 {
 	/**
 	 * It calls the superclass constructor and sets the obstacle.

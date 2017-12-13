@@ -2,7 +2,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-public class Car extends Vehicle
+public class Car extends Obstacle
 {		
 	
 	/**
