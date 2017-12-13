@@ -182,9 +182,9 @@ public class ObstacleMatrix
 		// Checks towards the direction given to sum to the energySpent and find a zero to know if cars can be moved.       
 		while(column >= 0 && column < currentGame[row].length && !foundZero)        
 		{            
-			// Sums an extra move until the zero has been found.           
-			++energySpent;       
-			// Checks if there's a zero.          
+			// Sums an extra move until the zero has been found.  			
+			energySpent ++;
+			// Checks if there's a zero. 
 			if(currentGame[row][column] == 0)            
 			{                
 				foundZero = true;      
@@ -240,8 +240,13 @@ public class ObstacleMatrix
 			if(vehicles[row][column] != null)
 				clearColumn = -1;
 		}
-		levelBeaten = clearColumn;
-			
+		levelBeaten = clearColumn;			
+	}
+	
+	public int getStarsObtained()
+	{
+		int starsCalculation = 3 + getMinimumEnergyConsumed() - energySpent;
+		return starsCalculation > 0? starsCalculation : 0;
 	}
 	
 	/**

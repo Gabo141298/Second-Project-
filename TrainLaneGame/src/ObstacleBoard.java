@@ -21,7 +21,6 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 	private Timer timerCarAnimation = null;
 	private Timer timerTrainLaneAnimation = null;
 	private int paintedLanes = 0;
-
 	private int movingCarX = 0;
 	private int movingCarRow = -1;
 	private int movingCarColumn = -1;
@@ -41,6 +40,7 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 
 		this.timerCarAnimation = new Timer(33, this);
 		this.timerTrainLaneAnimation = new Timer(120, this);
+		this.isTrainLaneAnimationDone = false;
 		try
 		{	
 			this.trainLaneImg = ImageIO.read( this.getClass().getResource("TrainLane.png"));		
@@ -49,6 +49,7 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 		{
 			System.out.println(exception);
 		}
+		System.out.printf("MinimumEnergy is %d%n", obstacleMatrix.getMinimumEnergyConsumed() );
 	}
 
 	// Override paintComponent to perform your own painting
@@ -90,12 +91,13 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 				
 			}
 		}
-		if(this.timerTrainLaneAnimation.isRunning())
-		{
-			paintTrainLane(this.obstacleMatrix.columnLevelHasBeenBeaten(), g, cellWidth, cellHeight );
-		}
+		if(this.obstacleMatrix.columnLevelHasBeenBeaten()>= 0 && this.timerTrainLaneAnimation.isRunning())
+				paintTrainLaneAnimation(this.obstacleMatrix.columnLevelHasBeenBeaten(), g, cellWidth, cellHeight );		
+		if(isTrainLaneAnimationDone)
+			paintStaticTrainLane(this.obstacleMatrix.columnLevelHasBeenBeaten(), g, cellWidth, cellHeight);
 	}		
-	private void paintTrainLane(int column, Graphics g, int cellWidth, int cellHeight) 
+
+	private void paintTrainLaneAnimation(int column, Graphics g, int cellWidth, int cellHeight) 
 	{	
 		if (this.paintedLanes <= obstacleMatrix.getRowCount())
 		{
@@ -116,6 +118,19 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 			this.isTrainLaneAnimationDone  = true;
 		}
 		this.paintedLanes ++;
+	}
+	private void paintStaticTrainLane(int column, Graphics g, int cellWidth, int cellHeight) 
+	{		
+		for (int row = 0; row <= obstacleMatrix.getRowCount(); ++ row)
+		{
+			int paddingHorizontal = (int)(cellWidth * 0.05);
+			g.drawImage(this.trainLaneImg,
+					calculateXY(column, cellWidth) + paddingHorizontal, 
+					calculateXY(row,cellHeight),
+					cellWidth - 2 * paddingHorizontal,
+					cellHeight ,
+					null);
+		}
 	}
 
 	/**
@@ -293,9 +308,11 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 	 */
 	public void loadLevel()
 	{
+		this.isTrainLaneAnimationDone = false;		
 		this.obstacleMatrix = new ObstacleMatrix( this.levelAdministrator.getCurrentLevel() );
 		this.obstacleMatrix.run();
 		this.repaint();
+		System.out.printf("MinimumEnergy is %d%n", obstacleMatrix.getMinimumEnergyConsumed() );
 	}
 
 	/**
@@ -346,6 +363,7 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 		this.paintedLanes = 0;
 		this.isTrainLaneAnimationDone = false;
 		this.timerTrainLaneAnimation.start();
+		System.out.println(obstacleMatrix.getStarsObtained());
 		
 	}
 	/**
@@ -375,19 +393,14 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 			int cellHeight = this.getHeight() / obstacleMatrix.getRowCount();
 			int row = event.getY() / cellHeight;
 			int column = event.getX() / cellWidth;
-			System.out.printf("mouseClicked(%d,%d)%n", event.getX(), event.getY());
-			System.out.printf("Obstacle(%d,%d)%n", row + 1, column + 1);
+
 			int carWidth = obstacleMatrix.getWeight(row, column);
-			this.direction =event.getX() - carWidth * cellWidth  % cellWidth > 40 ? 1 : -1;
-			
-			setDirection(row, column, event, cellWidth, carWidth);
-			
-			System.out.printf("The direction is %d%n", this.direction);			
+			this.direction =event.getX() - carWidth * cellWidth  % cellWidth > 40 ? 1 : -1;			
+			setDirection(row, column, event, cellWidth, carWidth);				
 			if((obstacleMatrix.canMoveTo(row, obstacleMatrix.getLeftSide(row, column), direction)))
 			{
 				this.movingCarRow = row;
 				this.movingCarColumn = obstacleMatrix.getLeftSide(row, column);
-				System.out.printf("The coordinates are(%d,%d)%n", movingCarRow + 1, movingCarColumn + 1);
 				this.movingCarX = MOVING_PIXELS * direction;
 				this.timerCarAnimation.start();
 			}
