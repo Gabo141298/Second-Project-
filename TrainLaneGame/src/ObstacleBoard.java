@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.ComboBoxModel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -363,7 +364,9 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 		this.paintedLanes = 0;
 		this.isTrainLaneAnimationDone = false;
 		this.timerTrainLaneAnimation.start();
-		System.out.println(obstacleMatrix.getStarsObtained());
+		System.out.println(obstacleMatrix.getStarsObtained());		
+
+		
 		
 	}
 	/**
@@ -447,6 +450,16 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 	{
 		// TODO Auto-generated method stub
 		// System.out.printf("mouseExited(%d,%d)%n", event.getX(), event.getY());
+	}
+
+	public String[] getLevels() 
+	{
+		return this.levelAdministrator.getLevelArray();
+	}
+
+	public void changeLevelTo(int newLevel) 
+	{
+		levelAdministrator.setLevel(newLevel);		
 	}
 
 

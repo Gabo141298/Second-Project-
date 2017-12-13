@@ -40,7 +40,6 @@ public class ObstacleMatrix
 		} 
 		catch (URISyntaxException exception) 
 		{
-			// TODO Auto-generated catch block
 			System.err.println(exception);
 		}
 	}
@@ -245,7 +244,7 @@ public class ObstacleMatrix
 	
 	public int getStarsObtained()
 	{
-		int starsCalculation = 3 + getMinimumEnergyConsumed() - energySpent;
+		int starsCalculation = (int) (3 + 0.5 * getMinimumEnergyConsumed() - 0.5* energySpent);
 		return starsCalculation > 0? starsCalculation : 0;
 	}
 	

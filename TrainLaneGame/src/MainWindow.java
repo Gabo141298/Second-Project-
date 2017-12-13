@@ -3,6 +3,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -22,6 +23,7 @@ public class MainWindow extends JFrame implements ActionListener
 	private JLabel labelLevel = null;
 	private JLabel labelEnergy = null;
 	private ObstacleBoard obstacleBoard = null;
+	JComboBox levelsDropDown = null;
 	
 	/**
 	 * Constructor for the MainWindow class. It sets the title of the window as "Train Lane Game".
@@ -64,10 +66,14 @@ public class MainWindow extends JFrame implements ActionListener
 		
 		Font font = new Font("Sans", Font.BOLD, 20);
 		
-		this.labelLevel = new JLabel("Level: 1");
+		this.labelLevel = new JLabel("Level: ");
 		labelLevel.setFont(font);
 		indicators.add(labelLevel, BorderLayout.WEST);
+		levelsDropDown = new JComboBox(obstacleBoard.getLevels());
+		levelsDropDown.setSelectedIndex(1);
+		levelsDropDown.addActionListener(this);
 		
+		indicators.add(levelsDropDown, BorderLayout.CENTER);
 		labelEnergy = new JLabel("Energy: 0");
 		labelEnergy.setFont(font);
 		indicators.add(labelEnergy, BorderLayout.EAST);
@@ -83,8 +89,7 @@ public class MainWindow extends JFrame implements ActionListener
 		if ( event.getSource() == this.elapsedTime )
 		{
 			this.updateElapsedTime();
-		}
-		
+		}		
 		if(this.obstacleBoard.levelHasBeenBeaten())
 		{
 			if(!obstacleBoard.hasFinishedAnimation()&& !obstacleBoard.isDoingTrainLaneAnimation())
@@ -102,9 +107,23 @@ public class MainWindow extends JFrame implements ActionListener
 				this.obstacleBoard.loadLevel();
 				this.elapsedSeconds = -1;
 				this.elapsedTime.restart();
-			}
-			
+			}			
 		}
+		if ( event.getSource() == this.levelsDropDown )
+		{
+			Object[] options = { "Yes", "No"};
+			int option = JOptionPane.showOptionDialog(null, "Are you sure you want to change level?", "Confirmation", 
+					JOptionPane.YES_NO_OPTION, 
+					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			if(option == 0)
+			{
+				this.obstacleBoard.changeLevelTo(Integer.parseInt((String) this.levelsDropDown.getSelectedItem()));
+			}
+			this.obstacleBoard.loadLevel();
+			this.elapsedSeconds = -1;
+			this.elapsedTime.restart();
+		}
+		
 	}
 	/**
 	 * Shows the elapsed time on the in game label
@@ -115,9 +134,9 @@ public class MainWindow extends JFrame implements ActionListener
 		long minutes = this.elapsedSeconds / 60;
 		long seconds = this.elapsedSeconds % 60;		
 		int level = this.obstacleBoard.getCurrentLevel();
-		String text = String.format("Level: %d. Time %02d:%02d", level , minutes, seconds);
+		String text = "Level: ";
 		this.labelLevel.setText(text);
-		text = String.format("Energy: %02d", obstacleBoard.getEnergySpent());
+		text = String.format("Time %02d:%02d Energy: %02d", minutes, seconds, obstacleBoard.getEnergySpent());
 		this.labelEnergy.setText(text);
 	}
 }
