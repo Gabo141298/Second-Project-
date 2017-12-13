@@ -315,6 +315,8 @@ public class ObstacleMatrix
 	
 	public int getStarsObtained()
 	{
+		if (energySpent == 0)
+			return 0;
 		int starsCalculation = (int) (3 + 0.5 * getMinimumEnergyConsumed() - 0.5* energySpent);
 		return starsCalculation > 0? starsCalculation : 0;
 	}

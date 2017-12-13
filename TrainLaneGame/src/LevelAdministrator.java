@@ -1,5 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.util.Scanner;
 
@@ -9,31 +11,30 @@ public class LevelAdministrator
 	
 	private final int TOTAL_LEVELS = 2;
 	
-	private String[] levelStars = new String[TOTAL_LEVELS+1];
+	private int[] levelStars = new int[TOTAL_LEVELS+1];
 	
 	private File levelStatusFile = null;
 	
 	private Scanner levelRecord = null;
+	
+	private ObstacleMatrix obstacleMatrix = null;
+	
+	private PrintStream output = null;
 	
 	/**
 	 * Constructor of LevelAdministrator.
 	 * It calls the constructor that sets the current level by sending as a parameter level 1.
 	 */
 	public LevelAdministrator()
-	{
+	{		
 		this(1);
-		this.loadLevelStatus();
-		for (int readingLevel = 1; readingLevel< levelStars.length; ++readingLevel)
-		{
-			this.levelStars[readingLevel]= levelRecord.next();
-		}
 	}
 	
 	private void loadLevelStatus() 
 	{
 		try
 		{
-			this.levelStatusFile = new File( this.getClass().getResource("LevelRecord.txt").toURI() );
+			this.levelStatusFile = new File( this.getClass().getResource("levelStatusFile.txt").toURI() );
 			this.levelRecord = new Scanner(levelStatusFile);
 		}
 		catch(FileNotFoundException exception)
@@ -54,22 +55,72 @@ public class LevelAdministrator
 	public LevelAdministrator(int level)
 	{
 		this.currentLevel = level;
+		this.loadLevelStatus();
+		for (int readingLevel = 1; readingLevel< levelStars.length; ++readingLevel)
+		{
+			this.levelStars[readingLevel]= levelRecord.nextInt();
+			System.err.println(this.levelStars[readingLevel]);
+		}
 	}
-	
+	/**
+	 * Adds the reference to the obstacle Matrix as a class attribute.
+	 * @param obstacleMatrix
+	 */
+	public void addObstacleMatrix(ObstacleMatrix obstacleMatrix) 
+	{
+		this.obstacleMatrix = obstacleMatrix;
+	}
 	/**
 	 * It adds to the current level count to get to the next level.
 	 */
 	public void addLevelCount()
 	{
+		checkStars();
 		if(++currentLevel > TOTAL_LEVELS)
 			currentLevel = 1;
+		
 	}
 	
 	public void setLevel(int newLevel)
 	{
+		checkStars();
 		this.currentLevel = newLevel;
 	}
 	
+	private void checkStars() 
+	{
+		System.err.println(obstacleMatrix.getStarsObtained());
+		System.err.println(this.levelStars[currentLevel] );
+		if (obstacleMatrix.getStarsObtained()> this.levelStars[currentLevel])
+		{
+			this.levelStars[currentLevel] = obstacleMatrix.getStarsObtained();
+			//Adapted from https://stackoverflow.com/questions/29878237/java-how-to-clear-a-text-file-without-deleting-it
+			levelStatusFile.delete();			
+			try 
+			{
+				levelStatusFile.createNewFile();
+			} 
+			catch (IOException exception) 
+			{
+				System.out.println("File couldn't be cleared");
+			}
+			try 
+			{
+				output= new PrintStream(levelStatusFile);
+			} 
+			catch (FileNotFoundException e) 
+			{
+				System.out.println("File couldn't be found");
+			}
+			for(int count = 1; count< this.levelStars.length; ++count)
+			{
+				System.out.println("Do something");
+				output.printf("%d%n", this.levelStars[count]);
+			}
+			output.close();
+		}
+	}
+
 	/**
 	 * It gets the number of the current level.
 	 * @return the number of the current level.
@@ -113,4 +164,10 @@ public class LevelAdministrator
 		}
 		return levelArray;
 	}
+
+	public int getCurrentStars() 
+	{
+		return this.levelStars[currentLevel];
+	}
+
 }

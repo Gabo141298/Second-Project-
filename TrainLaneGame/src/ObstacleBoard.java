@@ -36,7 +36,7 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 		
 		this.obstacleMatrix = new ObstacleMatrix( this.levelAdministrator.getCurrentLevel() );
 		this.obstacleMatrix.run();
-
+		this.levelAdministrator.addObstacleMatrix(this.obstacleMatrix);
 		this.addMouseListener(this);
 
 		this.timerCarAnimation = new Timer(33, this);
@@ -50,7 +50,7 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 		{
 			System.out.println(exception);
 		}
-		System.out.printf("MinimumEnergy is %d%n", obstacleMatrix.getMinimumEnergyConsumed() );
+		//System.out.printf("MinimumEnergy is %d%n", obstacleMatrix.getMinimumEnergyConsumed() );
 	}
 
 	// Override paintComponent to perform your own painting
@@ -313,7 +313,7 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 		this.obstacleMatrix = new ObstacleMatrix( this.levelAdministrator.getCurrentLevel() );
 		this.obstacleMatrix.run();
 		this.repaint();
-		System.out.printf("MinimumEnergy is %d%n", obstacleMatrix.getMinimumEnergyConsumed() );
+		//System.out.printf("MinimumEnergy is %d%n", obstacleMatrix.getMinimumEnergyConsumed() );
 	}
 
 	/**
@@ -363,10 +363,7 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 	{
 		this.paintedLanes = 0;
 		this.isTrainLaneAnimationDone = false;
-		this.timerTrainLaneAnimation.start();
-		System.out.println(obstacleMatrix.getStarsObtained());		
-
-		
+		this.timerTrainLaneAnimation.start();					
 		
 	}
 	/**
@@ -460,6 +457,10 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 	public void changeLevelTo(int newLevel) 
 	{
 		levelAdministrator.setLevel(newLevel);		
+	}
+	public int getCurrentStars()
+	{
+		return levelAdministrator.getCurrentStars();
 	}
 
 
