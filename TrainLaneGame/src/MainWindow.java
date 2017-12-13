@@ -24,6 +24,7 @@ public class MainWindow extends JFrame implements ActionListener
 	private JLabel labelEnergy = null;
 	private ObstacleBoard obstacleBoard = null;
 	JComboBox levelsDropDown = null;
+	private boolean ignoreChange = false;
 	
 	/**
 	 * Constructor for the MainWindow class. It sets the title of the window as "Train Lane Game".
@@ -69,17 +70,22 @@ public class MainWindow extends JFrame implements ActionListener
 		this.labelLevel = new JLabel("Level: ");
 		labelLevel.setFont(font);
 		indicators.add(labelLevel, BorderLayout.WEST);
-		levelsDropDown = new JComboBox(obstacleBoard.getLevels());
-		levelsDropDown.setSelectedIndex(1);
-		levelsDropDown.addActionListener(this);
+		addlevelsDropdown(indicators);
 		
-		indicators.add(levelsDropDown, BorderLayout.CENTER);
 		labelEnergy = new JLabel("Energy: 0");
 		labelEnergy.setFont(font);
 		indicators.add(labelEnergy, BorderLayout.EAST);
 		
 		this.add(indicators, BorderLayout.SOUTH);
 	}
+	private void addlevelsDropdown(JPanel indicators) 
+	{
+		levelsDropDown = new JComboBox(obstacleBoard.getLevels());
+		levelsDropDown.setSelectedIndex(this.obstacleBoard.getCurrentLevel());
+		levelsDropDown.addActionListener(this);
+		indicators.add(levelsDropDown, BorderLayout.CENTER);
+	}
+
 	/**
 	 * Causes the window to repaint if an action is being performed
 	 */
@@ -105,23 +111,32 @@ public class MainWindow extends JFrame implements ActionListener
 					this.obstacleBoard.nextLevel();
 				}
 				this.obstacleBoard.loadLevel();
+				ignoreChange = true;
+				levelsDropDown.setSelectedIndex(this.obstacleBoard.getCurrentLevel());				
 				this.elapsedSeconds = -1;
 				this.elapsedTime.restart();
 			}			
 		}
 		if ( event.getSource() == this.levelsDropDown )
 		{
-			Object[] options = { "Yes", "No"};
-			int option = JOptionPane.showOptionDialog(null, "Are you sure you want to change level?", "Confirmation", 
-					JOptionPane.YES_NO_OPTION, 
-					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-			if(option == 0)
+			if(!ignoreChange)
 			{
-				this.obstacleBoard.changeLevelTo(Integer.parseInt((String) this.levelsDropDown.getSelectedItem()));
+				Object[] options = { "Yes", "No"};
+				int option = JOptionPane.showOptionDialog(null, "Are you sure you want to change level?", "Confirmation", 
+						JOptionPane.YES_NO_OPTION, 
+						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				if(option == 0)
+				{
+					this.obstacleBoard.changeLevelTo(Integer.parseInt((String) this.levelsDropDown.getSelectedItem()));
+				}
+				this.obstacleBoard.loadLevel();
+				this.elapsedSeconds = -1;
+				this.elapsedTime.restart();
 			}
-			this.obstacleBoard.loadLevel();
-			this.elapsedSeconds = -1;
-			this.elapsedTime.restart();
+			else
+			{
+				ignoreChange = false;
+			}
 		}
 		
 	}
@@ -130,13 +145,25 @@ public class MainWindow extends JFrame implements ActionListener
 	 */
 	private void updateElapsedTime()
 	{
+		String stars = "";
+		if(obstacleBoard.getCurrentStars()> 0)
+		{
+			for(int count= 0; count < obstacleBoard.getCurrentStars(); ++count)
+			{
+				stars += "*";
+			}
+		}
+		else 
+		{
+			stars += "0";
+		}		
 		++this.elapsedSeconds;
 		long minutes = this.elapsedSeconds / 60;
 		long seconds = this.elapsedSeconds % 60;		
 		int level = this.obstacleBoard.getCurrentLevel();
 		String text = "Level: ";
 		this.labelLevel.setText(text);
-		text = String.format("Time %02d:%02d Energy: %02d", minutes, seconds, obstacleBoard.getEnergySpent());
+		text = String.format("Stars:%s                     Time %02d:%02d Energy: %02d",stars, minutes, seconds, obstacleBoard.getEnergySpent());
 		this.labelEnergy.setText(text);
 	}
 }
