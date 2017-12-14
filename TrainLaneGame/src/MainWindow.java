@@ -105,7 +105,7 @@ public class MainWindow extends JFrame implements ActionListener
 			else
 			{
 				Object[] options = { "Play next level", "Play again"};
-				String message = String.format("Congratulations on beating the level \n Best Score: %s", getStars());
+				String message = String.format("Congratulations on beating the level \n Your Score: %s", getStars());
 				int option = JOptionPane.showOptionDialog(null, message , "Congratulations", 
 						JOptionPane.YES_NO_OPTION, 
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -145,10 +145,15 @@ public class MainWindow extends JFrame implements ActionListener
 	
 	private String getStars()
 	{
+		int numberOfStars = 0;
+		if(obstacleBoard.levelHasBeenBeaten())
+			numberOfStars = obstacleBoard.getCurrentStars();
+		else
+			numberOfStars = obstacleBoard.getFileStars();
 		String stars = "";
-		if(obstacleBoard.getCurrentStars()> 0)
+		if(numberOfStars > 0)
 		{
-			for(int count= 0; count < obstacleBoard.getCurrentStars(); ++count)
+			for(int count= 0; count < numberOfStars; ++count)
 			{
 				stars += "*";
 			}
@@ -170,7 +175,8 @@ public class MainWindow extends JFrame implements ActionListener
 		int level = this.obstacleBoard.getCurrentLevel();
 		String text = "Level: ";
 		this.labelLevel.setText(text);
-		text = String.format("Stars:%s                     Time %02d:%02d Energy: %02d",getStars(), minutes, seconds, obstacleBoard.getEnergySpent());
+		text = String.format("Best Score:%s                     Time %02d:%02d Energy: %02d", getStars(), minutes,
+				seconds, obstacleBoard.getEnergySpent());
 		this.labelEnergy.setText(text);
 	}
 }

@@ -3,6 +3,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URISyntaxException;
+import java.util.Formatter;
 import java.util.Scanner;
 
 public class LevelAdministrator 
@@ -39,11 +40,11 @@ public class LevelAdministrator
 	{
 		this.currentLevel = level;
 		this.loadLevelStatus();
-		/*for (int readingLevel = 1; readingLevel< levelStars.length; ++readingLevel)
+		this.levelRecord.useDelimiter("");
+		for (int readingLevel = 1; readingLevel< levelStars.length; ++readingLevel)
 		{
- 
-			System.err.println(this.levelStars[readingLevel]);
-		}*/
+			levelStars[readingLevel] = this.levelRecord.nextInt();
+		}
 	}
 	
 	private void loadLevelStatus() 
@@ -93,29 +94,21 @@ public class LevelAdministrator
 		if (obstacleMatrix.getStarsObtained()> this.levelStars[currentLevel])
 		{
 			this.levelStars[currentLevel] = obstacleMatrix.getStarsObtained();
-			//Adapted from https://stackoverflow.com/questions/29878237/java-how-to-clear-a-text-file-without-deleting-it
-			levelStatusFile.delete();			
+					
 			try 
 			{
-				levelStatusFile.createNewFile();
+				Formatter levelResults = new Formatter(levelStatusFile);
+				for(int index = 1; index < levelStars.length; ++index)
+				{
+					levelResults.format("%d%n", levelStars[index]);
+				}
+				levelResults.close();
 			} 
 			catch (IOException exception) 
 			{
 				System.out.println("File couldn't be cleared");
 			}
-			try 
-			{
-				output= new PrintStream(levelStatusFile);
-			} 
-			catch (FileNotFoundException e) 
-			{
-				System.out.println("File couldn't be found");
-			}
-			for(int count = 1; count< this.levelStars.length; ++count)
-			{
-				output.printf("%d%n", this.levelStars[count]);
-			}
-			output.close();
+			
 		}
 	}
 
@@ -166,6 +159,11 @@ public class LevelAdministrator
 	public int getCurrentStars() 
 	{
 		checkStars();
+		return this.levelStars[currentLevel];
+	}
+	
+	public int getFileStars()
+	{
 		return this.levelStars[currentLevel];
 	}
 
