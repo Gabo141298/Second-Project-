@@ -175,7 +175,7 @@ public class MainWindow extends JFrame implements ActionListener
 		int level = this.obstacleBoard.getCurrentLevel();
 		String text = "Level: ";
 		this.labelLevel.setText(text);
-		text = String.format("Best Score:%s                     Time %02d:%02d Energy: %02d", getStars(), minutes,
+		text = String.format("Best Score:%s     Time %02d:%02d Energy: %02d", getStars(), minutes,
 				seconds, obstacleBoard.getEnergySpent());
 		this.labelEnergy.setText(text);
 	}

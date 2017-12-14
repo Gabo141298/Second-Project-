@@ -11,7 +11,7 @@ public class LevelAdministrator
 	
 	private final int TOTAL_LEVELS = 10;
 	
-	private int[] levelStars = new int[TOTAL_LEVELS+1];
+	private int[] levelStars = new int[TOTAL_LEVELS];
 	
 	private File levelStatusFile = null;
 	
@@ -38,7 +38,7 @@ public class LevelAdministrator
 		this.currentLevel = level;
 		this.loadLevelStatus();
 		this.levelRecord.useDelimiter("");
-		for (int readingLevel = 1; readingLevel< levelStars.length; ++readingLevel)
+		for (int readingLevel = 0; readingLevel< levelStars.length; ++readingLevel)
 		{
 			levelStars[readingLevel] = this.levelRecord.nextInt(); levelRecord.nextLine();
 		}
@@ -98,12 +98,12 @@ public class LevelAdministrator
 	{
 		if (obstacleMatrix.getStarsObtained()> this.levelStars[currentLevel])
 		{
-			this.levelStars[currentLevel] = obstacleMatrix.getStarsObtained();
+			this.levelStars[currentLevel - 1] = obstacleMatrix.getStarsObtained();
 					
 			try 
 			{
 				Formatter levelResults = new Formatter(levelStatusFile);
-				for(int index = 1; index < levelStars.length; ++index)
+				for(int index = 0; index < levelStars.length; ++index)
 				{
 					levelResults.format("%d%n", levelStars[index]);
 				}
