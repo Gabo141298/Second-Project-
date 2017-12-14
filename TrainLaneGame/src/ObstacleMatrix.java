@@ -63,14 +63,6 @@ public class ObstacleMatrix
 		{
 			 checkPlaysInColumns();  
 		}
-
-		for(int index = 0; index < playsPerColumn.length; ++index)        
-		{           
-			// It compares past values with the current one.    
-			if(playsPerColumn[index] == this.getMinimumEnergyConsumed())
-				System.out.println(index + " " + this.getMinimumEnergyConsumed());
-		} 
-		
 	}
 	
 	 /**     
@@ -137,8 +129,7 @@ public class ObstacleMatrix
 	{        
 		// Creates variables to store the energy values, two for each side.        
 		int leftPlays = 0;        
-		int rightPlays = 0;  
-		int middlePlays = Integer.MAX_VALUE;
+		int rightPlays = 0;
 		for(int column = 0; column < currentGame[0].length; ++column)        
 		{
 			for(int row = 0; row < currentGame.length && column < currentGame[0].length; ++row)
@@ -147,36 +138,39 @@ public class ObstacleMatrix
 				if(vehicles[row][column] != null)               
 				{                    
 					// Checks if you can move to the left.                    
-					if(vehicles[row][column].getLeftSide() > 0)                    
+					if(vehicles[row][column].getLeftSide() > 0 && checkPossiblePlay(row, column, -1, 
+							1 + column - vehicles[row][column].getLeftSide(), 
+							vehicles[row][column].getWeight()) )                   
 					{
-						leftPlays = getRequiredPlays(row, vehicles[row][column].getLeftSide(), -1, 0);  
-						if(vehicles[row][column].getWeight() >= 3 && checkOtherSide(row, column + 1, -1, 2, 2))
-							middlePlays = leftPlays + vehicles[row][column].getWeight();
+						leftPlays = getRequiredPlays(row, vehicles[row][column].getLeftSide(), -1, 
+								1 + column - vehicles[row][column].getLeftSide()); 
 					}                    
 					else                    
 					{                        
 						leftPlays = Integer.MAX_VALUE;                    
 					}                    
 					// Checks if you can move to the right.                    
-					if(vehicles[row][column].getRightSide() + 1 < currentGame[row].length)                    
+					if(vehicles[row][column].getRightSide() + 1 < currentGame[row].length && checkPossiblePlay(row, column, 1,
+							1 + vehicles[row][column].getRightSide() - column, 
+							vehicles[row][column].getWeight()) )                     
 					{
-						rightPlays = getRequiredPlays(row, vehicles[row][column].getRightSide(), 1, 0); 
-						if(vehicles[row][column].getWeight() >= 3 && checkOtherSide(row, column + 1, 1, 2, 2))
-							middlePlays = Math.min(rightPlays + vehicles[row][column].getWeight(), middlePlays);
+						rightPlays = getRequiredPlays(row, vehicles[row][column].getRightSide(), 1,
+								1 + vehicles[row][column].getRightSide() - column);
 					}                    
 					else                   
 					{                        
 						rightPlays = Integer.MAX_VALUE;                    
 					}   
 					
-					
-					setPlaysPerColumn(row, column, leftPlays, middlePlays, rightPlays);
-
-					column += vehicles[row][column].weight - 1;
-					middlePlays = Integer.MAX_VALUE;
-				} 
+					if(rightPlays < Integer.MAX_VALUE || leftPlays < Integer.MAX_VALUE)
+						playsPerColumn[column] += Math.min(leftPlays,  rightPlays);
+					else
+						playsPerColumn[column] = Integer.MAX_VALUE;
+				}
 			}
+			System.out.println(playsPerColumn[column]);
 		}
+		System.out.println();
 	}
 
 	/**     
@@ -192,21 +186,22 @@ public class ObstacleMatrix
 	{        
 		// Create variables, one to know if cars can be moved and the second one to return the moves needed to be made.        
 		boolean foundZero = false;        
-		energySpent += vehicles[row][column].getWeight() - 1;        
+		energySpent = energySpent * vehicles[row][column].getWeight();        
 		// If the column equals zero or currentGame.length - 1, it will still check towards the expected direction.     
 		column += direction;    
 		
 		
 		// Checks towards the direction given to sum to the energySpent and find a zero to know if cars can be moved.
 		while(column >= 0 && column < vehicles[row].length && !foundZero)        
-		{            
-			// Sums an extra move until the zero has been found.  			
-			energySpent ++;
+		{ 			
+			
 			// Checks if there's a zero. 
 			if(vehicles[row][column] == null)            
 			{                
 				foundZero = true;      
-			}            
+			}           
+			else
+				energySpent ++;
 			// Goes towards the direction given.             
 			column += direction;        
 		} 
@@ -230,7 +225,7 @@ public class ObstacleMatrix
 	 * @param neededZeroes the minimum empty spaces needed to leave an empty space in the given column.
 	 * @return true if there are more or equal zeroes than the neededZeroes parameter.
 	 */
-	public boolean checkOtherSide(int row, int column, int direction, int neededZeroes, int spacesToSkip)
+	public boolean checkPossiblePlay(int row, int column, int direction, int neededZeroes, int spacesToSkip)
 	{
 		int foundZeroes = 0;
 		column += spacesToSkip * direction;
@@ -246,52 +241,6 @@ public class ObstacleMatrix
 		return foundZeroes >= neededZeroes;
 	}
 	
-	/**
-	 * It sets the values in the playsPerColumn array according to each type of vehicle.
-	 * @param row used to locate the vehicle.
-	 * @param column used to locate the vehicle.
-	 * @param leftPlays used to set the energy used for the left side.
-	 * @param middlePlays used to set energy needed by the middle part of a vehicle (bus).
-	 * @param rightPlays used to set the energy used for the right side.
-	 */
-	public void setPlaysPerColumn(int row, int column, int leftPlays, int middlePlays, int rightPlays)
-	{
-		if(vehicles[row][column].getWeight() == 1)
-			playsPerColumn[column] += Math.min(leftPlays, rightPlays); 
-		else 
-		{
-			if(vehicles[row][column].getWeight() >= 3 )
-			{
-				if(middlePlays < Integer.MAX_VALUE && middlePlays > 0)
-					playsPerColumn[column + 1] += middlePlays;
-				else
-					playsPerColumn[column + 1] = Integer.MIN_VALUE;
-				if(column + 1 == 3)
-					System.out.println(row + ": " + leftPlays + "<->" + rightPlays);
-			}
-		
-			if(checkOtherSide(row, vehicles[row][column].getLeftSide(), -1, vehicles[row][column].getWeight() - 1, vehicles[row][column].getWeight()) )
-			{
-				playsPerColumn[column] += Math.min(rightPlays, Math.abs(leftPlays +
-						vehicles[row][column].getWeight() * (vehicles[row][column].getWeight() - 1) ) );
-			}
-			else
-				playsPerColumn[column] += rightPlays;
-			
-			if(checkOtherSide(row, vehicles[row][column].getRightSide(), 1, vehicles[row][column].getWeight() - 1, vehicles[row][column].getWeight()) )
-			{
-				playsPerColumn[vehicles[row][column].getRightSide()] += Math.min(leftPlays, Math.abs(rightPlays +
-						vehicles[row][column].getWeight() * (vehicles[row][column].getWeight() - 1) ) );
-			}
-			else
-				playsPerColumn[vehicles[row][column].getRightSide()] += leftPlays;
-			if(vehicles[row][column].getRightSide() == 3)
-				System.out.println(row + ": " + leftPlays + "<->" + rightPlays);
-			
-		}
-		if(column == 0)
-			System.out.println(row + ": " + leftPlays + "<->" + rightPlays);
-	}
 	
 	/**
 	 * It checks in the array which is the least energy needed to beat the level.     
@@ -336,6 +285,10 @@ public class ObstacleMatrix
 		
 	}
 	
+	/**
+	 * It gets the stars that the player obtained in a level.
+	 * @return the stars that the player obtained in a level.
+	 */
 	public int getStarsObtained()
 	{
 		if (energySpent == 0)
@@ -474,5 +427,10 @@ public class ObstacleMatrix
 			return this.vehicles[row][column - 1] == null;
 		}
 		return false;
+	}
+	
+	public Obstacle getVehicle(int row, int column)
+	{
+		return vehicles[row][column];
 	}
 }

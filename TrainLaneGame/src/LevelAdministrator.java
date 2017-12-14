@@ -1,7 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.util.Formatter;
 import java.util.Scanner;
@@ -19,8 +18,6 @@ public class LevelAdministrator
 	private Scanner levelRecord = null;
 	
 	private ObstacleMatrix obstacleMatrix = null;
-	
-	private PrintStream output = null;
 	
 	/**
 	 * Constructor of LevelAdministrator.
@@ -43,10 +40,13 @@ public class LevelAdministrator
 		this.levelRecord.useDelimiter("");
 		for (int readingLevel = 1; readingLevel< levelStars.length; ++readingLevel)
 		{
-			levelStars[readingLevel] = this.levelRecord.nextInt();
+			levelStars[readingLevel] = this.levelRecord.nextInt(); levelRecord.nextLine();
 		}
 	}
 	
+	/**
+	 * It gets the file where the record for each level is.
+	 */
 	private void loadLevelStatus() 
 	{
 		try
@@ -83,12 +83,19 @@ public class LevelAdministrator
 		
 	}
 	
+	/**
+	 * It sets a new current level.
+	 * @param newLevel used to set the current level.
+	 */
 	public void setLevel(int newLevel)
 	{
 		checkStars();
 		this.currentLevel = newLevel;
 	}
 	
+	/**
+	 * It sets a new record if the player makes it.
+	 */
 	private void checkStars() 
 	{
 		if (obstacleMatrix.getStarsObtained()> this.levelStars[currentLevel])
@@ -146,6 +153,10 @@ public class LevelAdministrator
 		return text;
 	}
 
+	/**
+	 * Used for the level selector.
+	 * @return an array to use as options.
+	 */
 	public String[] getLevelArray() 
 	{
 		String[] levelArray = new String [this.TOTAL_LEVELS +1];
@@ -156,15 +167,22 @@ public class LevelAdministrator
 		return levelArray;
 	}
 
-	public int getCurrentStars() 
+	/**
+	 * It gets the best score for the level.
+	 * @return the best score for the level.
+	 */
+	public int getFileStars() 
 	{
-		checkStars();
 		return this.levelStars[currentLevel];
 	}
 	
-	public int getFileStars()
+	/**
+	 * It gets the stars that the player got at the end of the level.
+	 * @return the stars that the player got at the end of the level.
+	 */
+	public int getCurrentStars()
 	{
-		return this.levelStars[currentLevel];
+		return obstacleMatrix.getStarsObtained();
 	}
 
 }

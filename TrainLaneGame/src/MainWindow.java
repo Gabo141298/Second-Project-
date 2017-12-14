@@ -153,7 +153,7 @@ public class MainWindow extends JFrame implements ActionListener
 		String stars = "";
 		if(numberOfStars > 0)
 		{
-			for(int count= 0; count < numberOfStars; ++count)
+			for(int count= 0; count < numberOfStars && count < 3; ++count)
 			{
 				stars += "*";
 			}

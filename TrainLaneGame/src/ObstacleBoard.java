@@ -394,16 +394,18 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 			int cellHeight = this.getHeight() / obstacleMatrix.getRowCount();
 			int row = event.getY() / cellHeight;
 			int column = event.getX() / cellWidth;
-
-			int carWidth = obstacleMatrix.getWeight(row, column);
-			this.direction =event.getX() - carWidth * cellWidth  % cellWidth > 40 ? 1 : -1;			
-			setDirection(row, column, event, cellWidth, carWidth);				
-			if((obstacleMatrix.canMoveTo(row, obstacleMatrix.getLeftSide(row, column), direction)))
+			if(obstacleMatrix.getVehicle(row, column) != null)
 			{
-				this.movingCarRow = row;
-				this.movingCarColumn = obstacleMatrix.getLeftSide(row, column);
-				this.movingCarX = MOVING_PIXELS * direction;
-				this.timerCarAnimation.start();
+				int carWidth = obstacleMatrix.getWeight(row, column);
+				this.direction =event.getX() - carWidth * cellWidth  % cellWidth > 40 ? 1 : -1;			
+				setDirection(row, column, event, cellWidth, carWidth);				
+				if((obstacleMatrix.canMoveTo(row, obstacleMatrix.getLeftSide(row, column), direction)))
+				{
+					this.movingCarRow = row;
+					this.movingCarColumn = obstacleMatrix.getLeftSide(row, column);
+					this.movingCarX = MOVING_PIXELS * direction;
+					this.timerCarAnimation.start();
+				}
 			}
 		}
 	}
