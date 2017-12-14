@@ -63,17 +63,6 @@ public class ObstacleMatrix
 		{
 			 checkPlaysInColumns();  
 		}
-		for(int row = 0; row < vehicles.length; ++row)
-		{
-			for(int column = 0; column < vehicles[row].length; ++column)
-			{
-				if(vehicles[row][column] != null)
-					System.out.print(vehicles[row][column].getWeight() + " ");
-				else
-					System.out.print("0 ");
-			}
-			System.out.println();
-		}
 	}
 	
 	 /**     
@@ -342,6 +331,7 @@ public class ObstacleMatrix
 				clearColumn = -1;
 		}
 		levelBeaten = clearColumn;
+		
 	}
 	
 	public int getStarsObtained()
