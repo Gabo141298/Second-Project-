@@ -9,7 +9,7 @@ public class LevelAdministrator
 {
 	private int currentLevel = 0;
 	
-	private final int TOTAL_LEVELS = 2;
+	private final int TOTAL_LEVELS = 3;
 	
 	private int[] levelStars = new int[TOTAL_LEVELS+1];
 	
