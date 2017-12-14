@@ -14,7 +14,6 @@ Dado que en la historia del juego el problema es muy frecuente (hay muchos nivel
 La solución no siempre es la columna que tiene más espacios vacíos.
 Pueden haber casos en los que hay dos columnas con la misma cantidad de espacios vacíos, pero una consume menos energía que la otra.
 
-Para poder avanzar al siguiente nivel, el jugador no puede gastar más de tres de energía que el mínimo posible en el nivel en el que está.
 Cada nivel le dará una calificación al jugador de acuerdo a su desempeño al ahorrarle energía a la compañía.
 Se hará en una escala de 0 a 3 estrellas y el jugador las obtendrá de la siguiente manera:
 
@@ -24,7 +23,21 @@ Se hará en una escala de 0 a 3 estrellas y el jugador las obtendrá de la sigui
 
 - 1 estrella si termina el nivel con solo dos más de energía utilizada que la solución óptima.
 
-- 0 estrellas si ocupa consumir tres o más de energía que la solución óptima.
+- 0 estrellas si consume tres o más de energía que la solución óptima.
 
 Este es un ejemplo de la ventana principal del juego:
 ![Ventana principal del juego](MainFrame.png)
+
+El juego tiene tres tipos de obstáculos:
+
+- Los carros: moverlos consume solo uno de energía y ocupan solo una celda. Se ven de la siguiente manera:
+![Carro](TrainLaneGame/assets/car.png)
+
+- Las ambulancias: moverlas consume dos de energía y ocupan dos celdas. Se ven de la siguiente manera:
+![Ambulancia](TrainLaneGame/assets/ambulance.png)
+
+- Los buses: moverlos consume tres de energía y ocupan tres celdas. Se ven de la siguiente manera:
+![Bus](TrainLaneGame/assets/bus.png)
+
+El jugador cuenta con la posibilidad de escoger el nivel que guste, al seleccionar en una lista en la esquina inferior izquierda de la ventana:
+![Selector de niveles](LevelSelector.png)

@@ -9,7 +9,7 @@ public class LevelAdministrator
 {
 	private int currentLevel = 0;
 	
-	private final int TOTAL_LEVELS = 3;
+	private final int TOTAL_LEVELS = 10;
 	
 	private int[] levelStars = new int[TOTAL_LEVELS+1];
 	
@@ -29,6 +29,22 @@ public class LevelAdministrator
 	{		
 		this(1);
 	}
+
+	/**
+	 * Constructor of LevelAdministrator.
+	 * It sets the current level according to the parameter.
+	 * @param level used to set the current level.
+	 */
+	public LevelAdministrator(int level)
+	{
+		this.currentLevel = level;
+		this.loadLevelStatus();
+		/*for (int readingLevel = 1; readingLevel< levelStars.length; ++readingLevel)
+		{
+ 
+			System.err.println(this.levelStars[readingLevel]);
+		}*/
+	}
 	
 	private void loadLevelStatus() 
 	{
@@ -46,22 +62,7 @@ public class LevelAdministrator
 			System.err.println(exception);
 		}		
 	}
-
-	/**
-	 * Constructor of LevelAdministrator.
-	 * It sets the current level according to the parameter.
-	 * @param level used to set the current level.
-	 */
-	public LevelAdministrator(int level)
-	{
-		this.currentLevel = level;
-		this.loadLevelStatus();
-		for (int readingLevel = 1; readingLevel< levelStars.length; ++readingLevel)
-		{
- 
-			System.err.println(this.levelStars[readingLevel]);
-		}
-	}
+	
 	/**
 	 * Adds the reference to the obstacle Matrix as a class attribute.
 	 * @param obstacleMatrix

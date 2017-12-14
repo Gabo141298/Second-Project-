@@ -63,6 +63,14 @@ public class ObstacleMatrix
 		{
 			 checkPlaysInColumns();  
 		}
+
+		for(int index = 0; index < playsPerColumn.length; ++index)        
+		{           
+			// It compares past values with the current one.    
+			if(playsPerColumn[index] == this.getMinimumEnergyConsumed())
+				System.out.println(index + " " + this.getMinimumEnergyConsumed());
+		} 
+		
 	}
 	
 	 /**     
@@ -264,16 +272,16 @@ public class ObstacleMatrix
 		
 			if(checkOtherSide(row, vehicles[row][column].getLeftSide(), -1, vehicles[row][column].getWeight() - 1, vehicles[row][column].getWeight()) )
 			{
-				playsPerColumn[column] += Math.min(rightPlays, leftPlays +
-						vehicles[row][column].getWeight() * (vehicles[row][column].getWeight() - 1) );
+				playsPerColumn[column] += Math.min(rightPlays, Math.abs(leftPlays +
+						vehicles[row][column].getWeight() * (vehicles[row][column].getWeight() - 1) ) );
 			}
 			else
 				playsPerColumn[column] += rightPlays;
 			
 			if(checkOtherSide(row, vehicles[row][column].getRightSide(), 1, vehicles[row][column].getWeight() - 1, vehicles[row][column].getWeight()) )
 			{
-				playsPerColumn[vehicles[row][column].getRightSide()] += Math.min(leftPlays, rightPlays +
-						vehicles[row][column].getWeight() * (vehicles[row][column].getWeight() - 1) );
+				playsPerColumn[vehicles[row][column].getRightSide()] += Math.min(leftPlays, Math.abs(rightPlays +
+						vehicles[row][column].getWeight() * (vehicles[row][column].getWeight() - 1) ) );
 			}
 			else
 				playsPerColumn[vehicles[row][column].getRightSide()] += leftPlays;
@@ -281,7 +289,7 @@ public class ObstacleMatrix
 				System.out.println(row + ": " + leftPlays + "<->" + rightPlays);
 			
 		}
-		if(column == 3)
+		if(column == 0)
 			System.out.println(row + ": " + leftPlays + "<->" + rightPlays);
 	}
 	
@@ -295,16 +303,10 @@ public class ObstacleMatrix
 		for(int index = 0; index < playsPerColumn.length; ++index)        
 		{           
 			// It compares past values with the current one.    
-			if(playsPerColumn[index] >= 0)
+			if(playsPerColumn[index] > 0 && playsPerColumn[index] < Integer.MAX_VALUE)
 				minimumPlays = Math.min(minimumPlays, playsPerColumn[index]);        
 		}        
 		
-		for(int index = 0; index < playsPerColumn.length; ++index)        
-		{           
-			// It compares past values with the current one.    
-			if(playsPerColumn[index] == minimumPlays)
-				System.out.println(index);
-		} 
 		
 		return minimumPlays;    
 	}        
