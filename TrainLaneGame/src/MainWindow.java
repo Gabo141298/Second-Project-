@@ -41,7 +41,9 @@ public class MainWindow extends JFrame implements ActionListener
 		
 		this.createObstacleBoard();
 		this.createGameIndicators();
-		
+		JLabel instructions = new JLabel("");
+		JOptionPane.showMessageDialog(instructions, "Click on the cars, on the side you want them to move to. \n Moving cars costs 1 energy, ambulances 2, busses 3.",
+		        "Instructions", JOptionPane.INFORMATION_MESSAGE);
 		this.elapsedTime = new Timer(1000, this);
 	    this.elapsedTime.start();
 	}
@@ -103,7 +105,8 @@ public class MainWindow extends JFrame implements ActionListener
 			else
 			{
 				Object[] options = { "Play next level", "Play again"};
-				int option = JOptionPane.showOptionDialog(null, "Congratulations on beating the level", "Congratulations", 
+				String message = String.format("Congratulations on beating the level \n Best Score: %s", getStars());
+				int option = JOptionPane.showOptionDialog(null, message , "Congratulations", 
 						JOptionPane.YES_NO_OPTION, 
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				if(option == 0)
@@ -137,13 +140,10 @@ public class MainWindow extends JFrame implements ActionListener
 			{
 				ignoreChange = false;
 			}
-		}
-		
+		}		
 	}
-	/**
-	 * Shows the elapsed time on the in game label
-	 */
-	private void updateElapsedTime()
+	
+	private String getStars()
 	{
 		String stars = "";
 		if(obstacleBoard.getCurrentStars()> 0)
@@ -156,14 +156,21 @@ public class MainWindow extends JFrame implements ActionListener
 		else 
 		{
 			stars += "0";
-		}		
+		}
+		return stars;
+	}
+	/**
+	 * Shows the elapsed time on the in game label
+	 */
+	private void updateElapsedTime()
+	{				
 		++this.elapsedSeconds;
 		long minutes = this.elapsedSeconds / 60;
 		long seconds = this.elapsedSeconds % 60;		
 		int level = this.obstacleBoard.getCurrentLevel();
 		String text = "Level: ";
 		this.labelLevel.setText(text);
-		text = String.format("Stars:%s                     Time %02d:%02d Energy: %02d",stars, minutes, seconds, obstacleBoard.getEnergySpent());
+		text = String.format("Stars:%s                     Time %02d:%02d Energy: %02d",getStars(), minutes, seconds, obstacleBoard.getEnergySpent());
 		this.labelEnergy.setText(text);
 	}
 }

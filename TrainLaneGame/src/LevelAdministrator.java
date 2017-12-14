@@ -9,7 +9,7 @@ public class LevelAdministrator
 {
 	private int currentLevel = 0;
 	
-	private final int TOTAL_LEVELS = 2;
+	private final int TOTAL_LEVELS = 3;
 	
 	private int[] levelStars = new int[TOTAL_LEVELS+1];
 	
@@ -58,7 +58,7 @@ public class LevelAdministrator
 		this.loadLevelStatus();
 		for (int readingLevel = 1; readingLevel< levelStars.length; ++readingLevel)
 		{
-			this.levelStars[readingLevel]= levelRecord.nextInt();
+ 
 			System.err.println(this.levelStars[readingLevel]);
 		}
 	}
@@ -89,8 +89,6 @@ public class LevelAdministrator
 	
 	private void checkStars() 
 	{
-		System.err.println(obstacleMatrix.getStarsObtained());
-		System.err.println(this.levelStars[currentLevel] );
 		if (obstacleMatrix.getStarsObtained()> this.levelStars[currentLevel])
 		{
 			this.levelStars[currentLevel] = obstacleMatrix.getStarsObtained();
@@ -114,7 +112,6 @@ public class LevelAdministrator
 			}
 			for(int count = 1; count< this.levelStars.length; ++count)
 			{
-				System.out.println("Do something");
 				output.printf("%d%n", this.levelStars[count]);
 			}
 			output.close();
@@ -167,6 +164,7 @@ public class LevelAdministrator
 
 	public int getCurrentStars() 
 	{
+		checkStars();
 		return this.levelStars[currentLevel];
 	}
 
