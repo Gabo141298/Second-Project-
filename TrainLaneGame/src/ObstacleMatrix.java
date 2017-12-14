@@ -168,9 +168,7 @@ public class ObstacleMatrix
 						playsPerColumn[column] = Integer.MAX_VALUE;
 				}
 			}
-			System.out.println(playsPerColumn[column]);
 		}
-		System.out.println();
 	}
 
 	/**     

@@ -312,6 +312,7 @@ public class ObstacleBoard extends JPanel implements ActionListener, MouseListen
 		this.isTrainLaneAnimationDone = false;		
 		this.obstacleMatrix = new ObstacleMatrix( this.levelAdministrator.getCurrentLevel() );
 		this.obstacleMatrix.run();
+		this.levelAdministrator.checkStars();
 		this.levelAdministrator.addObstacleMatrix(this.obstacleMatrix);
 		this.repaint();
 		//System.out.printf("MinimumEnergy is %d%n", obstacleMatrix.getMinimumEnergyConsumed() );

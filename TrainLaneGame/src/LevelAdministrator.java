@@ -77,10 +77,8 @@ public class LevelAdministrator
 	 */
 	public void addLevelCount()
 	{
-		checkStars();
 		if(++currentLevel > TOTAL_LEVELS)
 			currentLevel = 1;
-		
 	}
 	
 	/**
@@ -96,7 +94,7 @@ public class LevelAdministrator
 	/**
 	 * It sets a new record if the player makes it.
 	 */
-	private void checkStars() 
+	public void checkStars() 
 	{
 		if (obstacleMatrix.getStarsObtained()> this.levelStars[currentLevel])
 		{
